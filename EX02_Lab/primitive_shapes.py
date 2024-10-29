@@ -24,6 +24,14 @@ def setup():
     """
     Only executed ONCE (at the start); use to load files and initialize.
     """
+    engine.background_color = 1, 1, 1
+    pass
+
+def render():
+    """
+    This function is being executed over and over, as fast as the frame rate. Use to draw (not update).
+    """
+    draw_shape_4()
 
     pass
 
@@ -47,29 +55,22 @@ def draw_shape_1():
 
 def draw_shape_4():
     """
-    draws 4 circles and a square
+    draws 4 black circles and a white square in the middle of them
     :return:
     """
     engine.shape_mode = ShapeMode.CENTER
-    engine.background_color = 1, 1, 1
     engine.color = 0, 0, 0
-    engine.outline_color = 0, 0, 0
+    engine.outline_color = None
 
-    engine.draw_circle(engine.width/4,engine.width/4,engine.width/4,0)
-    engine.draw_circle(engine.width/2, engine.width/4,engine.width/4, 0)
-    engine.draw_circle(engine.width/2, engine.width/2,engine.width/4, 0)
-    engine.draw_circle(engine.width, engine.width,engine.width/4, 0)
+    #                     middle x         middle y        diameter
+    engine.draw_ellipse(engine.width/4, engine.height/4, engine.width/2, engine.height/2,)
+    engine.draw_ellipse(engine.width/4*3, engine.height/4, engine.width/2, engine.height/2)
+    engine.draw_ellipse(engine.width/4, engine.height/4*3, engine.width/2, engine.height/2)
+    engine.draw_ellipse(engine.width/4*3, engine.height/4*3, engine.width/2, engine.height/2)
 
+    engine.color = 1,1,1
+    engine.draw_rectangle(engine.width*.5,engine.height*.5,engine.width*.5,engine.height*.5)
     pass
-
-def render():
-    """
-    This function is being executed over and over, as fast as the frame rate. Use to draw (not update).
-    """
-    draw_shape_4()
-
-    pass
-
 
 def evaluate():
     """

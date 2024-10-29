@@ -28,13 +28,13 @@ def assign_house():
 
 def random_spell():
     global spells
-    print(random.choice(spells))
+    print(f"I cast {random.choice(spells)}!!!")
     pass
 
 def show_frenemy():
     global students
     idx = random.randint(0,15)
-    print(f"{students[idx][0]} {students[idx][1]}")
+    print(f"and I cast it on {students[idx][0]} {students[idx][1]}! grrr!!!")
     pass
 
 assign_house()
