@@ -12,6 +12,7 @@ Created on 08/11/2024
 # 4. backspace delete
 # 5. load image
 # 6. draw image
+# 7. stretch goals
 
 import dae_progfa_lib as pfe
 from dae_progfa_lib import ShapeMode, MouseButton
@@ -26,14 +27,19 @@ engine = pfe.ProgfaEngine(800, 600)
 engine.set_fps(60)
 
 text = "Kachow!"
+img = engine.load_image("RetroComic.png")
 
 def setup():
     """
     Only executed ONCE (at the start); use to load files and initialize.
     """
+    global img
+
     engine.set_font("CrashLandingBB.ttf")
     engine.shape_mode = ShapeMode.CENTER
     engine.set_font_size(200)
+    print(img)
+
     pass
 
 
@@ -41,12 +47,13 @@ def render():
     """
     This function is being executed over and over, as fast as the frame rate. Use to draw (not update).
     """
-    engine.background_color = 0,0,0
+    global img
+    img.draw_fixed_size(engine.width*.5,engine.height*.5,engine.width,engine.height,False)
+
+    engine.color = 0, 0, 0
+    engine.draw_text(text, engine.width / 2 + 10, engine.height / 2 + 10, True)
     engine.color = 1,.4,.1
     engine.draw_text(text, engine.width / 2, engine.height / 2, True)
-
-    engine.load_image("RetroComic.png")
-
 
     pass
 
@@ -73,7 +80,7 @@ def key_up_event(key: str):
     Special keys have more than 1 character, for example ESCAPE, BACKSPACE, ENTER, ...
     """
     global text
-    allowed = "!","?",".",","
+    allowed = "!","?",".",","," "
 
     if key == "BACKSPACE":
         text = ""
