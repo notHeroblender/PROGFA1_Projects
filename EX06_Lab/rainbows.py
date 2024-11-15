@@ -29,6 +29,24 @@ print(f"{color}Test 123!{reset}")  # by printing text in between these ansi colo
 #       -> any numeric value between 30-37 (inclusive) or 90-97 (inclusive) - these are valid foreground colors
 #   Only once the user input is correct, use the given get_ansi_color_code to show "Hello world" in the chosen color
 
+
+inpt = input("Pick ANSI colour code (30-36, 90-96, 40-46, 100-106): ")
+while type(inpt) is not int:
+    try:
+        intinpt = int(inpt)
+
+        if (30 <= intinpt <= 36) or (40 <= intinpt <= 46) or (90 <= intinpt <= 96) or (100 <= intinpt <= 106):
+            print(f"{get_ansi_color_code(intinpt)}Hello World!{reset}")
+            break
+        else:
+            print(f"Error: {inpt} not in range of ANSI codes")
+            inpt = input("Pick ANSI colour code (30-36, 90-96, 40-46, 100-106): ")
+    except ValueError:
+        print(f"Error: {inpt} is not an int")
+        inpt = input("Pick ANSI colour code (30-36, 90-96, 40-46, 100-106): ")
+
+print("Thanks")
+
 # TODO 2: Print all possible foreground colors and all possible background colors in a table (see screenshots)
 
 
