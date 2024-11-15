@@ -3,6 +3,7 @@ By using ANSI color codes while printing to the console, you can change the colo
 See demo week 03.
 This is given start code for the rainbow exercise.
 """
+import random
 
 
 def get_ansi_color_code(color_code: int = 0) -> str:
@@ -22,20 +23,39 @@ color = get_ansi_color_code(93)    # results in bright yellow: \033[93m
 reset = get_ansi_color_code(0)     # results in ansi code to reset color: \033[0m
 print(f"{color}Test 123!{reset}")  # by printing text in between these ansi color codes, our text appears in a color
 
-fg_black = 30
-fg_gray = 90
-fg_red = 31
-fg_red_bright = 91
-fg_yellow = 33
-fg_yellow_bright = 93
-fg_green = 32
-fg_green_bright = 92
-fg_teal = 36
-fg_teal_bright = 96
-fg_blue = 34
-fg_blue_bright = 94
-fg_purple = 35
-fg_purple_bright = 95
+fg_black = get_ansi_color_code(30)
+fg_gray = get_ansi_color_code(90)
+fg_red = get_ansi_color_code(31)
+fg_red_bright = get_ansi_color_code(91)
+fg_yellow = get_ansi_color_code(33)
+fg_yellow_bright = get_ansi_color_code(93)
+fg_green = get_ansi_color_code(32)
+fg_green_bright = get_ansi_color_code(92)
+fg_teal = get_ansi_color_code(36)
+fg_teal_bright = get_ansi_color_code(96)
+fg_blue = get_ansi_color_code(34)
+fg_blue_bright = get_ansi_color_code(94)
+fg_purple = get_ansi_color_code(35)
+fg_purple_bright = get_ansi_color_code(95)
+fg_colours = (fg_black,fg_gray,fg_red,fg_red_bright,fg_yellow,fg_yellow_bright,fg_green,
+              fg_green_bright,fg_teal,fg_teal_bright,fg_blue,fg_blue_bright,fg_purple,fg_purple_bright)
+
+bg_black = get_ansi_color_code(40)
+bg_gray = get_ansi_color_code(100)
+bg_red = get_ansi_color_code(41)
+bg_red_bright = get_ansi_color_code(101)
+bg_yellow = get_ansi_color_code(43)
+bg_yellow_bright = get_ansi_color_code(103)
+bg_green = get_ansi_color_code(42)
+bg_green_bright = get_ansi_color_code(102)
+bg_teal = get_ansi_color_code(46)
+bg_teal_bright = get_ansi_color_code(106)
+bg_blue = get_ansi_color_code(44)
+bg_blue_bright = get_ansi_color_code(104)
+bg_purple = get_ansi_color_code(45)
+bg_purple_bright = get_ansi_color_code(105)
+bg_colours = (bg_black,bg_gray,bg_red,bg_red_bright,bg_yellow,bg_yellow_bright,bg_green,
+              bg_green_bright,bg_teal,bg_teal_bright,bg_blue,bg_blue_bright,bg_purple,bg_purple_bright)
 
 # TODO 1: Ask the user for a color code. Show the text "Hello world!" in this color.
 #   USE A LOOP: Keep asking until the user entered a correct ansi color number:
@@ -64,13 +84,13 @@ print("Thanks")
 # TODO 2: Print all possible foreground colors and all possible background colors in a table (see screenshots)
 
 print(f"FOREGROUND: \n-----------")
-print(f"{get_ansi_color_code(fg_black)}NORMAL: {fg_black} - {get_ansi_color_code(fg_gray)}BRIGHT: {fg_gray}{reset}")
-print(f"{get_ansi_color_code(fg_red)}NORMAL: {fg_red} - {get_ansi_color_code(fg_red_bright)}BRIGHT: {fg_red_bright}{reset}")
-print(f"{get_ansi_color_code(fg_yellow)}NORMAL: {fg_yellow} - {get_ansi_color_code(fg_yellow_bright)}BRIGHT: {fg_yellow_bright}{reset}")
-print(f"{get_ansi_color_code(fg_green)}NORMAL: {fg_green} - {get_ansi_color_code(fg_green_bright)}BRIGHT: {fg_green_bright}{reset}")
-print(f"{get_ansi_color_code(fg_teal)}NORMAL: {fg_teal} - {get_ansi_color_code(fg_teal_bright)}BRIGHT: {fg_teal_bright}{reset}")
-print(f"{get_ansi_color_code(fg_blue)}NORMAL: {fg_blue} - {get_ansi_color_code(fg_blue_bright)}BRIGHT: {fg_blue_bright}{reset}")
-print(f"{get_ansi_color_code(fg_purple)}NORMAL: {fg_purple} - {get_ansi_color_code(fg_purple_bright)}BRIGHT: {fg_purple_bright}{reset}")
+print(f"{fg_black}NORMAL: {30} - {fg_gray}BRIGHT: {90}{reset}")
+print(f"{fg_red}NORMAL: {31} - {fg_red_bright}BRIGHT: {91}{reset}")
+print(f"{fg_yellow}NORMAL: {33} - {fg_yellow_bright}BRIGHT: {93}{reset}")
+print(f"{fg_green}NORMAL: {32} - {fg_green_bright}BRIGHT: {92}{reset}")
+print(f"{fg_teal}NORMAL: {36} - {fg_teal_bright}BRIGHT: {96}{reset}")
+print(f"{fg_blue}NORMAL: {34} - {fg_blue_bright}BRIGHT: {94}{reset}")
+print(f"{fg_purple}NORMAL: {35} - {fg_purple_bright}BRIGHT: {95}{reset}")
 
 print(f"BACKGROUND: \n-----------")
 print(f"{get_ansi_color_code(40)}NORMAL: {40} - {get_ansi_color_code(100)}BRIGHT: {100}{reset}")
@@ -81,5 +101,9 @@ print(f"{get_ansi_color_code(46)}NORMAL: {46} - {get_ansi_color_code(106)}BRIGHT
 print(f"{get_ansi_color_code(44)}NORMAL: {44} - {get_ansi_color_code(104)}BRIGHT: {104}{reset}")
 print(f"{get_ansi_color_code(45)}NORMAL: {45} - {get_ansi_color_code(105)}BRIGHT: {105}{reset}")
 
-# TODO 3: Ask the user for a sentence they want to 'rainbownize'
+# TODO 3: Ask the user for a sentence they want to 'rainbowize'
 #   Print every character with background color black and a random bright foreground color
+
+text = input("sentence: ")
+for ltr in text:
+    print(f"{random.choice(fg_colours)}{ltr}{reset}",end="")
