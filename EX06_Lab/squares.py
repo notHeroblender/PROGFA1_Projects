@@ -13,17 +13,56 @@ import math
 from pygame.math import Vector2
 
 # Create an instance of ProgfaEngine and set window size (width, height):
-engine = pfe.ProgfaEngine(800, 600)
+engine = pfe.ProgfaEngine(500, 500)
 
 # Set the frame rate to x frames per second:
 engine.set_fps(60)
 
+size = 10
 
 def setup():
     """
     Only executed ONCE (at the start); use to load files and initialize.
     """
-
+    global size
+    engine.outline_color = 0, 0, 0
+    engine.shape_mode = ShapeMode.CENTER
+    #diagonal \
+    posx, posy = size*.5, size*.5
+    while (posx <= engine.width) and (posy <= engine.height):
+        engine.color = 0,0,1 #blue
+        engine.draw_square(posx, posy, size)
+        posx += size
+        posy += size
+    #diagonal /
+    posx, posy = (engine.width - size * .5), size * .5
+    while (posx >= 0) and (posy <= engine.height):
+        engine.color = 1,1,0 #yellow
+        engine.draw_square(posx, posy, size)
+        posx -= size
+        posy += size
+    #top --
+    posx, posy = size*.5, size*.5
+    while posx <= engine.width:
+        engine.color = 1, 0, 0  #red
+        engine.draw_square(posx, posy, size)
+        posx += size
+    #bottom --
+    posx, posy = size*.5, (engine.height - size * .5)
+    while posx <= engine.width:
+        engine.draw_square(posx, posy, size)
+        posx += size
+    #left |
+    posx, posy = size * .5, size*.5
+    while posy <= engine.height:
+        engine.color = 0, 1, 0  # green
+        engine.draw_square(posx, posy, size)
+        posy += size
+    #right |
+    posx, posy = (engine.width - size * .5), size*.5
+    while posy <= engine.height:
+        engine.draw_square(posx, posy, size)
+        posy += size
     pass
 
 
