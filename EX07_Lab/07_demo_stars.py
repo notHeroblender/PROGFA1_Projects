@@ -74,7 +74,7 @@ def render():
     """
     engine.background_color = 0,0,0.1
     #draw_star(x_pos,y_pos) # single star
-    for i in range(start_star_amount):
+    for i in range(len(list_x_pos)):
         draw_star(list_x_pos[i],list_y_pos[i])
 
     pass
@@ -92,7 +92,7 @@ def move(speed:int = 2):
     #x_pos -= speed # single star
     #if x_pos <= -offset: # single star
     #    x_pos += engine.width + (offset*2) #offset = small visual buffer # single star
-    for i in range(start_star_amount):
+    for i in range(len(list_x_pos)): # do not use start amount, list has length
         list_x_pos[i] -= speed
         if list_x_pos[i] <= -offset:
             list_x_pos[i] += engine.width + (offset * 2)  # offset = small visual buffer
@@ -112,11 +112,9 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     """
     This function is only executed once each time a mouse button was pressed!
     """
-    global start_star_amount
     if mouse_button == MouseButton.LEFT:
-        list_x_pos.append(random.randint(0, engine.width)) # single star
-        list_y_pos.append(random.randint(0, engine.height)) # single star
-        start_star_amount += 1
+        list_x_pos.append(mouse_x) # single star
+        list_y_pos.append(mouse_y) # single star
 
     pass
 
@@ -126,11 +124,9 @@ def key_up_event(key: str):
     This function is only executed once each time a key was released!
     Special keys have more than 1 character, for example ESCAPE, BACKSPACE, ENTER, ...
     """
-    global start_star_amount
-    if start_star_amount > 0:
+    if len(list_x_pos) > 0:
         list_x_pos.pop()
         list_y_pos.pop()
-        start_star_amount -= 1
 
     pass
 
