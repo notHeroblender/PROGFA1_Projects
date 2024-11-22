@@ -20,12 +20,6 @@ engine = pfe.ProgfaEngine(300, 300)
 # Set the frame rate to x frames per second:
 engine.set_fps(60)
 
-# wrong way
-#frame_01 = engine.load_image("Resources/crewmates/green1.png")
-#frame_02 = engine.load_image("Resources/crewmates/green2.png")
-#frame_03 = engine.load_image("Resources/crewmates/green3.png")
-#frame_04 = engine.load_image("Resources/crewmates/green4.png")
-# Good way
 frames = []
 frames_amt = 4
 
@@ -61,16 +55,6 @@ def draw_frame(frame:int=0):
     :param frame:
     :return:
     """
-    # Wrong way
-    #if frame == 0:
-    #    frame_01.draw(0,0)
-    #if frame == 1:
-    #    frame_02.draw(0,0)
-    #if frame == 2:
-    #    frame_03.draw(0,0)
-    #if frame == 3:
-    #    frame_04.draw(0,0)
-    #Good way
     img:ProgfaImage = frames[frame] #long way to see the functions instead of frames[frame].draw()
     img.draw(0,0)
 
@@ -86,16 +70,11 @@ def evaluate():
     """
     This function is being executed over and over, as fast as the frame rate. Use to update (not draw).
     """
-    #Wrong way
     global current_frame, timer
     timer += 1
     if timer >= max_timer:
         timer = 0
         current_frame += 1
-        # Wrong way
-        #if current_frame > 3:
-        #    current_frame = 0
-        #Right way(s)
         # Logic
         #if current_frame >= len(frames):
         #    current_frame = 0
