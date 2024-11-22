@@ -106,6 +106,11 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     """
     This function is only executed once each time a mouse button was pressed!
     """
+    global start_star_amount
+    if mouse_button == MouseButton.LEFT:
+        list_x_pos.append(random.randint(0, engine.width)) # single star
+        list_y_pos.append(random.randint(0, engine.height)) # single star
+        start_star_amount += 1
 
     pass
 
