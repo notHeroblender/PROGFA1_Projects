@@ -120,7 +120,11 @@ def key_up_event(key: str):
     This function is only executed once each time a key was released!
     Special keys have more than 1 character, for example ESCAPE, BACKSPACE, ENTER, ...
     """
-
+    global start_star_amount
+    if start_star_amount > 0:
+        list_x_pos.pop()
+        list_y_pos.pop()
+        start_star_amount -= 1
     pass
 
 
