@@ -13,7 +13,7 @@ import math
 from pygame.math import Vector2
 
 # Create an instance of ProgfaEngine and set window size (width, height):
-engine = pfe.ProgfaEngine(800, 600)
+engine = pfe.ProgfaEngine(1100, 400)
 
 # Set the frame rate to x frames per second:
 engine.set_fps(60)
@@ -23,7 +23,7 @@ def setup():
     """
     Only executed ONCE (at the start); use to load files and initialize.
     """
-
+    engine.background_color = 0.15, 0.15, 0.15
     pass
 
 
