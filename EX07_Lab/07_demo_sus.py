@@ -10,6 +10,8 @@ import dae_progfa_lib as pfe
 from dae_progfa_lib import ShapeMode, MouseButton
 from dae_progfa_lib import MouseButton
 import math
+
+from dae_progfa_lib.progfa_image import ProgfaImage
 from pygame.math import Vector2
 
 # Create an instance of ProgfaEngine and set window size (width, height):
@@ -18,13 +20,14 @@ engine = pfe.ProgfaEngine(300, 300)
 # Set the frame rate to x frames per second:
 engine.set_fps(60)
 
-#wrong way
-frame_01 = engine.load_image("Resources/crewmates/green1.png")
-frame_02 = engine.load_image("Resources/crewmates/green2.png")
-frame_03 = engine.load_image("Resources/crewmates/green3.png")
-frame_04 = engine.load_image("Resources/crewmates/green4.png")
-
-frames = frame_01, frame_02, frame_03, frame_04
+# wrong way
+#frame_01 = engine.load_image("Resources/crewmates/green1.png")
+#frame_02 = engine.load_image("Resources/crewmates/green2.png")
+#frame_03 = engine.load_image("Resources/crewmates/green3.png")
+#frame_04 = engine.load_image("Resources/crewmates/green4.png")
+# Good way
+frames = []
+frames_amt = 4
 
 current_frame = 1
 timer = 0
@@ -34,6 +37,9 @@ def setup():
     """
     Only executed ONCE (at the start); use to load files and initialize.
     """
+    for i in range(frames_amt):
+        frames.append(engine.load_image(f"Resources/crewmates/green{i+1}.png"))
+    print(frames)
 
     pass
 
@@ -44,7 +50,7 @@ def render():
     """
     global current_frame
     engine.background_color = 1,1,1
-    
+
     draw_frame(current_frame)
 
     pass
@@ -55,22 +61,24 @@ def draw_frame(frame:int=0):
     :param frame:
     :return:
     """
-    #Wrong way
-    if frame == 0:
-        frame_01.draw(0,0)
-    if frame == 1:
-        frame_02.draw(0,0)
-    if frame == 2:
-        frame_03.draw(0,0)
-    if frame == 3:
-        frame_04.draw(0,0)
+    # Wrong way
+    #if frame == 0:
+    #    frame_01.draw(0,0)
+    #if frame == 1:
+    #    frame_02.draw(0,0)
+    #if frame == 2:
+    #    frame_03.draw(0,0)
+    #if frame == 3:
+    #    frame_04.draw(0,0)
+    #Good way
+    img:ProgfaImage = frames[frame] #long way to see the functions instead of frames[frame].draw()
+    img.draw(0,0)
 
     #Debug
     engine.set_font_size(20)
     engine.color = 0,0,0
     engine.draw_text(str(frame),20,20)
 
-    #frames[frame].draw(0,0)
     pass
 
 
@@ -84,8 +92,15 @@ def evaluate():
     if timer >= max_timer:
         timer = 0
         current_frame += 1
-        if current_frame > 3:
-            current_frame = 0
+        # Wrong way
+        #if current_frame > 3:
+        #    current_frame = 0
+        #Right way(s)
+        # Logic
+        #if current_frame >= len(frames):
+        #    current_frame = 0
+        # Math
+        current_frame %= len(frames) # % remainder after div in full nr -> 0,1,2,3,0,1,2,3, etc
 
     pass
 
