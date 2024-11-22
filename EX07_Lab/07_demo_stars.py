@@ -51,6 +51,8 @@ def draw_star(x:int,y:int)->None: #-> (x: int | float) -> x can be int or float
     size = 2
     engine. draw_circle(x,y,size)
 
+    pass
+
 def random_position():
     """
     generates a random value for the global x_pos and y_pos
@@ -63,6 +65,8 @@ def random_position():
     for i in range(start_star_amount):
         list_x_pos.append(random.randint(0, engine.width))
         list_y_pos.append(random.randint(0, engine.height))
+
+    pass
 
 def render():
     """
@@ -92,6 +96,8 @@ def move(speed:int = 2):
         list_x_pos[i] -= speed
         if list_x_pos[i] <= -offset:
             list_x_pos[i] += engine.width + (offset * 2)  # offset = small visual buffer
+
+    pass
 
 def evaluate():
     """
@@ -125,6 +131,7 @@ def key_up_event(key: str):
         list_x_pos.pop()
         list_y_pos.pop()
         start_star_amount -= 1
+
     pass
 
 
