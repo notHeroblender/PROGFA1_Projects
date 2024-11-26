@@ -85,7 +85,6 @@ def move(speed:int = 2):
     :param speed: how fast it moves, positive = moving left, negative = moving right
     :return:
     """
-    global x_pos
     global list_x_pos
     speed = 2
     offset = 3
