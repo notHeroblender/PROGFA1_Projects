@@ -10,6 +10,8 @@ import dae_progfa_lib as pfe
 from dae_progfa_lib import ShapeMode, MouseButton
 from dae_progfa_lib import MouseButton
 import math
+
+from dae_progfa_lib.progfa_image import ProgfaImage
 from pygame.math import Vector2
 
 # Create an instance of ProgfaEngine and set window size (width, height):
@@ -22,17 +24,22 @@ engine.set_fps(60)
 layers = []
 layer_amt = 3
 
+player_img:ProgfaImage
+
 list_x_pos = []
 
 def setup():
     """
     Only executed ONCE (at the start); use to load files and initialize.
     """
+    global player_img
+
     for i in range(layer_amt):
         layers.append(engine.load_image(f"Resources/{i+1}.png"))
-    print(layers)
+    #print(layers)
 
-    engine.load_image("Resources/player.png")
+    player_img = engine.load_image("Resources/player.png")
+    print(player_img)
     pass
 
 
@@ -40,6 +47,7 @@ def render():
     """
     This function is being executed over and over, as fast as the frame rate. Use to draw (not update).
     """
+    global player_img
 
     engine.background_color = (0.011764705882352941,0.1568627450980392,0.12549019607843137)
 
@@ -52,6 +60,8 @@ def render():
         layers[i].draw(list_x_pos[2*i+1],0)   #1,3,5...
 
     animate_parallax(1)
+
+    player_img.draw(0,0)
 
     pass
 
