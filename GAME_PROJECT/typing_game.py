@@ -18,8 +18,9 @@ engine = pfe.ProgfaEngine(960, 540)
 # Set the frame rate to x frames per second:
 engine.set_fps(60)
 
+
 layers = []
-layer_amt = 4
+layer_amt = 3
 
 list_x_pos = []
 
@@ -30,6 +31,8 @@ def setup():
     for i in range(layer_amt):
         layers.append(engine.load_image(f"Resources/{i+1}.png"))
     print(layers)
+
+    engine.load_image("Resources/player.png")
     pass
 
 
@@ -40,28 +43,39 @@ def render():
 
     engine.background_color = (0.011764705882352941,0.1568627450980392,0.12549019607843137)
 
-    layers[0].draw(0,0)
-    layers[1].draw(0,0)
-    layers[2].draw(0,0) #player
-    layers[3].draw(0,0)
+    for i in range(len(layers)):    #set every layer's x pos to 0
+        list_x_pos.append(0)    #add one at 0
+        list_x_pos.append(engine.width) #add one just off-screen
+
+    for i in range(len(layers)):    #draw every layer
+        layers[i].draw(list_x_pos[2*i],0)   #0,2,4...
+        layers[i].draw(list_x_pos[2*i+1],0)   #1,3,5...
+
+    animate_parallax(1)
 
     pass
 
-def animate_parallax(layer:int):
+def animate_parallax(speed_multiplier):
     """
     animates the background with parallax effect
     :return:
     """
     global list_x_pos
-    speed = 2
-    offset = 3
-    # x_pos -= speed # single star
-    # if x_pos <= -offset: # single star
-    #    x_pos += engine.width + (offset*2) #offset = small visual buffer # single star
-    for i in range(len(list_x_pos)):  # do not use start amount, list has length
+    default_speed = 2
+    offset = engine.width
+
+    for i in range(0,len(list_x_pos),2):
+        layer_nr = i//2 #0=0,1=0,2=1,3=1,4=2,5=2...
+
+        speed = default_speed*(layer_nr+speed_multiplier)
         list_x_pos[i] -= speed
+        list_x_pos[i+1] -= speed
+
         if list_x_pos[i] <= -offset:
-            list_x_pos[i] += engine.width + (offset * 2)  # offset = small visual buffer
+            list_x_pos[i] += engine.width*2
+        if list_x_pos[i+1] <= -offset:
+            list_x_pos[i+1] += engine.width*2
+
     pass
 
 
