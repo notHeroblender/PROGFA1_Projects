@@ -5,6 +5,7 @@ Created on 29/11/2024
 
 @author: pinne
 """
+import random
 
 """
 1. Fish
@@ -152,6 +153,7 @@ def evaluate():
     This function is being executed over and over, as fast as the frame rate. Use to update (not draw).
     """
     update_fish()
+    update_bubbles()
     pass
 
 def update_fish():
@@ -162,7 +164,10 @@ def update_fish():
 
 def update_bubbles():
     global b_max, b_size, b_pos
-
+    #- always moving, rand x speed (-2,2), rand y speed (.1,2)
+    for pos in b_pos:
+        pos[0] += randint(-2,2)
+        pos[1] -= random.uniform(.1,2)
 
     pass
 
