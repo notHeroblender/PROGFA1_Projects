@@ -25,11 +25,11 @@ Created on 29/11/2024
 /        - size = 20
 /        - max amt = 5
         - opt vars: bub_min_x_speed, bub_max_x_speed, bub_min_y_speed, bub_max_y_speed
-    b. opt: init bubbles -> clear lists, to start over
-    c. spawn bubble
-        - if amt < max amt, add bubble to list at mousepos
-    d. draw bubble
-        - draw circle for each var in list
+-    b. opt: init bubbles -> clear lists, to start over
+/    c. spawn bubble
+/        - if amt < max amt, add bubble to list at mousepos
+/    d. draw bubble
+/        - draw circle for each var in list
     e. update bubble
         - always moving, rand x speed (-2,2), rand y speed (.1,2)
             - opt: keep inside x=0 and x=width
@@ -104,14 +104,19 @@ def init_bubbles():
 
     b_pos = []
     b_max = 5
-    b_size = 20
+    b_size = 30
+
+    temp_pos = [engine.width/2, engine.height/2]
+    b_pos.append(temp_pos)
     pass
 
 def render():
     """
     This function is being executed over and over, as fast as the frame rate. Use to draw (not update).
     """
+    engine.background_color = 0.216, 0.502, 0.812
     draw_fish()
+    draw_bubbles()
     pass
 
 def draw_fish():
@@ -131,12 +136,21 @@ def draw_fish():
         fish_l_r[1].draw(f_x_pos,f_y_pos)
     pass
 
+def draw_bubbles():
+    global b_max, b_size, b_pos
+
+    engine.outline_color = 1,1,1
+    engine.color = 0,0,0,0
+
+    for pos in b_pos:
+        engine.draw_circle(pos[0], pos[1],b_size,2)
+    pass
+
 
 def evaluate():
     """
     This function is being executed over and over, as fast as the frame rate. Use to update (not draw).
     """
-    engine.background_color = 0.216, 0.502, 0.812
     update_fish()
     pass
 
@@ -144,6 +158,11 @@ def update_fish():
     global f_x_pos, f_y_pos, f_speed
 
     f_x_pos += f_speed
+    pass
+
+def update_bubbles():
+    global b_max, b_size, b_pos
+
 
     pass
 
@@ -152,6 +171,10 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     """
     This function is only executed once each time a mouse button was pressed!
     """
+    global b_max, b_pos
+
+    if len(b_pos) < b_max:
+        b_pos.append([mouse_x, mouse_y])
 
     pass
 
