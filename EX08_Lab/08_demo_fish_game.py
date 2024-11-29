@@ -5,7 +5,6 @@ Created on 29/11/2024
 
 @author: pinne
 """
-import random
 
 """
 1. Fish
@@ -32,7 +31,7 @@ import random
 /    d. draw bubble
 /        - draw circle for each var in list
     e. update bubble
-        - always moving, rand x speed (-2,2), rand y speed (.1,2)
+/        - always moving, rand x speed (-2,2), rand y speed (.1,2)
             - opt: keep inside x=0 and x=width
         - if off screen, remove from list (hint in doc)
             - -5 score
@@ -51,6 +50,7 @@ from dae_progfa_lib import MouseButton
 import math
 from pygame.math import Vector2
 
+import random
 from random import randint
 from dae_progfa_lib.progfa_image import ProgfaImage
 
@@ -168,6 +168,10 @@ def update_bubbles():
     for pos in b_pos:
         pos[0] += randint(-2,2)
         pos[1] -= random.uniform(.1,2)
+
+        if pos[1] < (0-b_size):
+            i = b_pos.index(pos)
+            b_pos.pop(i)
 
     pass
 
