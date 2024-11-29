@@ -5,26 +5,25 @@ Created on 29/11/2024
 
 @author: pinne
 """
-from dae_progfa_lib.progfa_image import ProgfaImage
 
 """
 1. Fish
 /    a. vars: xpos, ypos, speed, left img, right img
-    b. load images, init fish vars
+/    b. load images, init fish vars
 /        - start left outside of screen -> 0-size
 /        - starts with pos speed (moving right)
-        - resize fish to 100x100
+/        - resize fish to 100x100
 /    c. draw one fish
 /        - pick which image based on speed (neg=L,pos=R)
-    d. update fish
-        - always moving: xpos += speed
-        - if outside, flip fish
-            - new ypos, other fish frame
+/    d. update fish
+/        - always moving: xpos += speed
+/        - if outside, flip fish
+/            - new ypos, other fish frame
 2. Bubbles (start with one)
-    a. vars: 
-        - list xpos[xpos,xpos,xpos], list ypos[ypos,ypos,ypos] || list of list of xypos[[xpos,ypos],[xpos,ypos]], 
-        - size = 20
-        - max amt = 5
+/    a. vars: 
+/        - list xpos[xpos,xpos,xpos], list ypos[ypos,ypos,ypos] || list of list of xypos[[xpos,ypos],[xpos,ypos]], 
+/        - size = 20
+/        - max amt = 5
         - opt vars: bub_min_x_speed, bub_max_x_speed, bub_min_y_speed, bub_max_y_speed
     b. opt: init bubbles -> clear lists, to start over
     c. spawn bubble
@@ -51,6 +50,9 @@ from dae_progfa_lib import MouseButton
 import math
 from pygame.math import Vector2
 
+from random import randint
+from dae_progfa_lib.progfa_image import ProgfaImage
+
 # Create an instance of ProgfaEngine and set window size (width, height):
 engine = pfe.ProgfaEngine(600, 800)
 
@@ -66,6 +68,10 @@ f_speed = 0
 fish_l:ProgfaImage
 fish_r:ProgfaImage
 #bubble vars
+b_pos = []
+b_max = 0
+b_size = 0
+
 #ui vars
 
 def setup():
@@ -73,6 +79,7 @@ def setup():
     Only executed ONCE (at the start); use to load files and initialize.
     """
     init_fish()
+    init_bubbles()
     pass
 
 def init_fish():
@@ -91,7 +98,13 @@ def init_fish():
     f_y_pos = 200
 
     f_speed = 5
+    pass
+def init_bubbles():
+    global b_max, b_size, b_pos
 
+    b_pos = []
+    b_max = 5
+    b_size = 20
     pass
 
 def render():
@@ -106,13 +119,16 @@ def draw_fish():
     draws a fish using the global f_x_pos, f_y_pos. left or right facing is calculated using f_speed
     :return:
     """
-    global f_x_pos,f_y_pos
+    global f_x_pos,f_y_pos, f_speed
+
+    if (f_x_pos < -100) | (f_x_pos>engine.width):
+        f_y_pos = randint(0,engine.height)
+        f_speed *= -1
 
     if f_speed < 0:
         fish_l_r[0].draw(f_x_pos, f_y_pos)
     else:
         fish_l_r[1].draw(f_x_pos,f_y_pos)
-
     pass
 
 
@@ -120,6 +136,14 @@ def evaluate():
     """
     This function is being executed over and over, as fast as the frame rate. Use to update (not draw).
     """
+    engine.background_color = 0.216, 0.502, 0.812
+    update_fish()
+    pass
+
+def update_fish():
+    global f_x_pos, f_y_pos, f_speed
+
+    f_x_pos += f_speed
 
     pass
 
