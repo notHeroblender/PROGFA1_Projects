@@ -5,16 +5,17 @@ Created on 29/11/2024
 
 @author: pinne
 """
+from dae_progfa_lib.progfa_image import ProgfaImage
 
 """
 1. Fish
-    a. vars: xpos, ypos, speed, left img, right img
+/    a. vars: xpos, ypos, speed, left img, right img
     b. load images, init fish vars
-        - start left outside of screen -> 0-size
-        - starts with pos speed (moving right)
+/        - start left outside of screen -> 0-size
+/        - starts with pos speed (moving right)
         - resize fish to 100x100
-    c. draw one fish
-        - pick which image based on speed (neg=L,pos=R)
+/    c. draw one fish
+/        - pick which image based on speed (neg=L,pos=R)
     d. update fish
         - always moving: xpos += speed
         - if outside, flip fish
@@ -37,6 +38,7 @@ Created on 29/11/2024
             - -5 score
         - if collide fish, remove from list (hint in doc)
             - +1 score
+        !!! remove back to front, not front to back in list
 3. UI
     a. vars: score
     b. draw score
@@ -50,13 +52,19 @@ import math
 from pygame.math import Vector2
 
 # Create an instance of ProgfaEngine and set window size (width, height):
-engine = pfe.ProgfaEngine(800, 600)
+engine = pfe.ProgfaEngine(600, 800)
 
 # Set the frame rate to x frames per second:
 engine.set_fps(60)
 
 #fish vars
 fish_l_r = []
+f_x_pos = 0
+f_y_pos = 0
+f_speed = 0
+#temp
+fish_l:ProgfaImage
+fish_r:ProgfaImage
 #bubble vars
 #ui vars
 
@@ -64,14 +72,46 @@ def setup():
     """
     Only executed ONCE (at the start); use to load files and initialize.
     """
-
+    init_fish()
     pass
 
+def init_fish():
+    global fish_l_r, fish_l, fish_r, f_x_pos, f_y_pos, f_speed
+
+    fish_l = engine.load_image("Resources/fish_L.png")
+    fish_r = engine.load_image("Resources/fish_R.png")
+
+    fish_l.resize(100,100,True)
+    fish_r.resize(100,100,True)
+
+    fish_l_r.append(fish_l)
+    fish_l_r.append(fish_r)
+
+    f_x_pos = 110
+    f_y_pos = 200
+
+    f_speed = 5
+
+    pass
 
 def render():
     """
     This function is being executed over and over, as fast as the frame rate. Use to draw (not update).
     """
+    draw_fish()
+    pass
+
+def draw_fish():
+    """
+    draws a fish using the global f_x_pos, f_y_pos. left or right facing is calculated using f_speed
+    :return:
+    """
+    global f_x_pos,f_y_pos
+
+    if f_speed < 0:
+        fish_l_r[0].draw(f_x_pos, f_y_pos)
+    else:
+        fish_l_r[1].draw(f_x_pos,f_y_pos)
 
     pass
 
