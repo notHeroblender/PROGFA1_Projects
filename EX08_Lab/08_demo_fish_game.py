@@ -154,6 +154,7 @@ def evaluate():
     """
     update_fish()
     update_bubbles()
+    check_collision()
     pass
 
 def update_fish():
@@ -164,7 +165,7 @@ def update_fish():
 
 def update_bubbles():
     global b_max, b_size, b_pos
-    #- always moving, rand x speed (-2,2), rand y speed (.1,2)
+
     for pos in b_pos:
         pos[0] += randint(-2,2)
         pos[1] -= random.uniform(.1,2)
@@ -172,9 +173,16 @@ def update_bubbles():
         if pos[1] < (0-b_size):
             i = b_pos.index(pos)
             b_pos.pop(i)
-
     pass
 
+def check_collision():
+    global f_x_pos, f_y_pos, b_pos, b_size, fish_l_r
+
+    for pos in b_pos:
+        if engine.colliding_rects(f_x_pos,f_y_pos,fish_l_r[0].width, fish_l_r[0].height, pos[0],pos[1],b_size,b_size):
+            i = b_pos.index(pos)
+            b_pos.pop(i)
+    pass
 
 def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     """
@@ -184,7 +192,6 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
 
     if len(b_pos) < b_max:
         b_pos.append([mouse_x, mouse_y])
-
     pass
 
 
