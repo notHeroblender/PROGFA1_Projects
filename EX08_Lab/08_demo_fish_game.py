@@ -72,8 +72,9 @@ fish_r:ProgfaImage
 b_pos = []
 b_max = 0
 b_size = 0
-
+b_ammo = 0
 #ui vars
+score = 0
 
 def setup():
     """
@@ -101,11 +102,12 @@ def init_fish():
     f_speed = 5
     pass
 def init_bubbles():
-    global b_max, b_size, b_pos
+    global b_max, b_size, b_pos, b_ammo
 
     b_pos = []
     b_max = 5
     b_size = 30
+    b_ammo = 5
 
     temp_pos = [engine.width/2, engine.height/2]
     b_pos.append(temp_pos)
@@ -118,6 +120,8 @@ def render():
     engine.background_color = 0.216, 0.502, 0.812
     draw_fish()
     draw_bubbles()
+    draw_ammo()
+    draw_score()
     pass
 
 def draw_fish():
@@ -147,6 +151,22 @@ def draw_bubbles():
         engine.draw_circle(pos[0], pos[1],b_size,2)
     pass
 
+def draw_ammo():
+    global b_max, b_pos, score
+
+    engine.color = 1,1,1
+    engine.set_font_size(20)
+    engine.draw_text(f"BUBBLE AMMO: {b_max-len(b_pos)}", 2,2)
+    pass
+
+def draw_score():
+    global score
+
+    engine.color = 1, 1, 1
+    engine.set_font_size(20)
+    engine.draw_text(f"SCORE: {score}", 2,25)
+    pass
+
 
 def evaluate():
     """
@@ -164,7 +184,7 @@ def update_fish():
     pass
 
 def update_bubbles():
-    global b_max, b_size, b_pos
+    global b_max, b_size, b_pos, score
 
     for pos in b_pos:
         pos[0] += randint(-2,2)
@@ -173,16 +193,19 @@ def update_bubbles():
         if pos[1] < (0-b_size):
             i = b_pos.index(pos)
             b_pos.pop(i)
+            score -= 5
     pass
 
 def check_collision():
-    global f_x_pos, f_y_pos, b_pos, b_size, fish_l_r
+    global f_x_pos, f_y_pos, b_pos, b_size, fish_l_r, score
 
     for pos in b_pos:
         if engine.colliding_rects(f_x_pos,f_y_pos,fish_l_r[0].width, fish_l_r[0].height, pos[0],pos[1],b_size,b_size):
             i = b_pos.index(pos)
             b_pos.pop(i)
+            score += 1
     pass
+
 
 def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     """
