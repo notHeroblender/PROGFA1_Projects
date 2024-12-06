@@ -25,6 +25,8 @@ engine.set_fps(60)
 #UI
 bg_img:ProgfaImage
 btn_img:ProgfaImage
+score = 0
+mistakes = 0
 
 #GAMEPLAY
 #Visuals
@@ -54,12 +56,9 @@ def setup():
     """
     Only executed ONCE (at the start); use to load files and initialize.
     """
-    if current_state == GameState.START:
-        init_start()
-    if current_state == GameState.PLAY:
-        init_gameplay()
-    if current_state == GameState.END:
-        init_end()
+    init_start()
+    init_gameplay()
+    init_end()
 
     pass
 
@@ -206,6 +205,9 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     """
     This function is only executed once each time a mouse button was pressed!
     """
+    global current_state
+    if current_state == GameState.START:
+        current_state = GameState.PLAY
 
     pass
 
@@ -221,6 +223,8 @@ def key_up_event(key: str):
         elif key == " ":
             next_word()
 
+    print(f"score: {score}, mistakes: {mistakes}")
+
     pass
 
 def spell_checker(k):
@@ -229,7 +233,7 @@ def spell_checker(k):
     :param k: pressed key
     :return:
     """
-    global current_words, displayed_word, typed_letters
+    global current_words, displayed_word, typed_letters, mistakes
 
     if k == displayed_word[len(typed_letters)]:
         print(f"{k.lower()} - 👍 (Green)")
@@ -238,6 +242,7 @@ def spell_checker(k):
         print(f"{k.lower()} - wrong, new word (Red)")
         displayed_word = random.choice(current_words)
         typed_letters = ""
+        mistakes += 1
 
     pass
 
@@ -246,14 +251,16 @@ def next_word():
     picks what to do when a new word is picked
     :return:
     """
-    global current_words, displayed_word, typed_letters
+    global current_words, displayed_word, typed_letters, score, mistakes
 
     if typed_letters == displayed_word:
         print(f"{typed_letters} - is correct (Yellow)")
         typed_letters = ""
+        score += 1
     else:
         print(f"{typed_letters} - wrong spelling (Red)")
         typed_letters = ""
+        mistakes += 1
     displayed_word = random.choice(current_words)
 
     pass
