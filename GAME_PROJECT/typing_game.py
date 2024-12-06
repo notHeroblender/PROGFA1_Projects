@@ -26,6 +26,8 @@ engine.set_fps(60)
 layers = []
 layer_amt = 5
 player_img:ProgfaImage
+player_sprite_width = 0
+ground_height = engine.height - 160
 list_x_pos = []
 #Logic
 typed_letters = ""
@@ -50,7 +52,7 @@ def init_gameplay():
     puts the right values in the global variables needed for the gameplay
     :return:
     """
-    global player_img, current_words, player_img, layers
+    global player_img, current_words, player_img, layers, player_sprite_width
 
     for i in range(layer_amt):
         layers.append(engine.load_image(f"Resources/{i + 1}.png"))
@@ -60,6 +62,8 @@ def init_gameplay():
 
     player_img = engine.load_image("Resources/Run.png")
     print(player_img)
+    player_img.resize(1350, 200,True)
+    player_sprite_width = player_img.width/9
 
     #set difficulty
     current_words.clear()
@@ -84,7 +88,7 @@ def draw_visuals():
     draws the visuals (background and player)
     :return:
     """
-    global player_img
+    global player_img, player_sprite_width
 
     engine.background_color = (0.5607843137254902, 0.8235294117647058, 0.2980392156862745)
 
@@ -98,7 +102,7 @@ def draw_visuals():
 
     animate_parallax(1)
 
-    player_img.draw(0, 0)
+    player_img.draw_partial(60,ground_height,(0,0,player_img.height,player_sprite_width))
 
     pass
 
@@ -108,9 +112,6 @@ def draw_game_text():
     :return:
     """
     global current_words,displayed_word,typed_letters
-
-    #temp
-    engine.background_color = 0,0,0
 
     engine.set_font_size(20)
     engine.color = 1,1,1
