@@ -13,6 +13,7 @@ import math
 
 from dae_progfa_lib.progfa_image import ProgfaImage
 from pygame.math import Vector2
+from enum import Enum
 import random
 
 # Create an instance of ProgfaEngine and set window size (width, height):
@@ -21,9 +22,9 @@ engine = pfe.ProgfaEngine(960, 540)
 # Set the frame rate to x frames per second:
 engine.set_fps(60)
 
-#START
-
-#END
+#UI
+bg_img:ProgfaImage
+btn_img:ProgfaImage
 
 #GAMEPLAY
 #Visuals
@@ -47,19 +48,33 @@ class GameState(Enum):
     PLAY = 1
     END = 2
 
-current_state = GameState.PLAY
+current_state = GameState.START
 
 def setup():
     """
     Only executed ONCE (at the start); use to load files and initialize.
     """
+    if current_state == GameState.START:
+        init_start()
     if current_state == GameState.PLAY:
         init_gameplay()
+    if current_state == GameState.END:
+        init_end()
 
     pass
 
 def init_start():
+    global bg_img, btn_img
 
+    bg_img = engine.load_image("Resources/UI/bg.png")
+    btn_img = engine.load_image("Resources/UI/btn.png")
+
+    bg_img.resize(engine.width,engine.height,False)
+    btn_img.resize(250,75,False)
+
+    pass
+
+def init_end():
     pass
 
 def init_gameplay():
@@ -89,7 +104,8 @@ def render():
     """
     This function is being executed over and over, as fast as the frame rate. Use to draw (not update).
     """
-
+    if current_state == GameState.START:
+        draw_start()
     if current_state == GameState.PLAY:
         draw_visuals()
         draw_game_text()
@@ -97,7 +113,21 @@ def render():
     pass
 
 def draw_start():
+    """
+    draws the start menu background image with two buttons in the middle, one to start the game and one to quit the program
+    :return:
+    """
+    btn_offset = 10
+    engine.color = 1,1,1
+    engine.set_font_size(34)
 
+    bg_img.draw(0,0)
+
+    btn_img.draw(engine.width/2-(btn_img.width/2),engine.height/2-btn_img.height/2)
+    engine.draw_text("START GAME", engine.width/2, engine.height/2, True)
+    btn_img.draw(engine.width/2-(btn_img.width/2),engine.height/2+btn_img.height/2+btn_offset)
+    engine.draw_text("QUIT", engine.width/2,engine.height/2+btn_img.height+btn_offset, True)
+    #btn_img.draw(engine.width/2-(btn_img.width/2),engine.height/2+btn_img.height*1.5+btn_offset*2)
     pass
 
 def draw_visuals():
