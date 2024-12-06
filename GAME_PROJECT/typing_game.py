@@ -24,10 +24,11 @@ engine.set_fps(60)
 #GMEPLAY
 #Visuals
 layers = []
-layer_amt = 3
+layer_amt = 5
 player_img:ProgfaImage
 list_x_pos = []
 #Logic
+typed_letters = ""
 displayed_word = ""
 current_words = []
 easy_words = ["cat", "dog", "book", "tree", "star", "fish", "blue", "apple", "chair", "house", "train",
@@ -45,14 +46,16 @@ def setup():
     pass
 
 def init_gameplay():
-    global player_img, words
+    global player_img, current_words
 
     for i in range(layer_amt):
         layers.append(engine.load_image(f"Resources/{i + 1}.png"))
-    # print(layers)
+    for j in range(len(layers)):
+        layers[j].resize(engine.width,engine.height,False)
+    #print(layers)
 
-    player_img = engine.load_image("Resources/player.png")
-    print(player_img)
+    #player_img = engine.load_image("Resources/player.png")
+    #print(player_img)
 
     #set difficulty
     current_words.clear()
@@ -72,7 +75,7 @@ def render():
     pass
 
 def draw_gameplay():
-    #draw_visuals()
+    draw_visuals()
     draw_game_text()
 
     pass
@@ -84,7 +87,7 @@ def draw_visuals():
     """
     global player_img
 
-    engine.background_color = (0.011764705882352941, 0.1568627450980392, 0.12549019607843137)
+    engine.background_color = (0.5607843137254902, 0.8235294117647058, 0.2980392156862745)
 
     for i in range(len(layers)):  # set every layer's x pos to 0
         list_x_pos.append(0)  # add one at 0
@@ -96,7 +99,7 @@ def draw_visuals():
 
     animate_parallax(1)
 
-    player_img.draw(0, 0)
+    #player_img.draw(0, 0)
 
     pass
 
@@ -157,9 +160,20 @@ def key_up_event(key: str):
     This function is only executed once each time a key was released!
     Special keys have more than 1 character, for example ESCAPE, BACKSPACE, ENTER, ...
     """
-    global current_words, displayed_word
-
-    if key == " ":
+    global current_words, displayed_word, typed_letters
+    if key.isalpha():
+        if key == displayed_word[len(typed_letters)]:
+            print(f"{key.lower()} - 👍 (Green)")
+            typed_letters += key
+        else:
+            print(f"{key.lower()} - wrong, new word (Red)")
+            displayed_word = random.choice(current_words)
+            typed_letters = ""
+    elif key == " ":
+        if typed_letters == displayed_word:
+            print(f"{typed_letters} - is correct (Yellow)")
+        else:
+            print(f"{typed_letters} - wrong spelling (Red)")
         displayed_word = random.choice(current_words)
 
     pass
