@@ -104,14 +104,18 @@ def draw_visuals():
     pass
 
 def draw_game_text():
-    global current_words,displayed_word
+    global current_words,displayed_word,typed_letters
 
     #temp
     engine.background_color = 0,0,0
 
     engine.set_font_size(20)
     engine.color = 1,1,1
-    engine.draw_text(displayed_word, engine.width/2,engine.height/2, True)
+    engine.draw_text(displayed_word, engine.width/2,engine.height/2)
+
+    #draws green regardless if correct or not
+    engine.color = 0,1,0
+    engine.draw_text(typed_letters, engine.width/2,engine.height/2)
 
     pass
 
@@ -160,21 +164,41 @@ def key_up_event(key: str):
     This function is only executed once each time a key was released!
     Special keys have more than 1 character, for example ESCAPE, BACKSPACE, ENTER, ...
     """
-    global current_words, displayed_word, typed_letters
     if key.isalpha():
-        if key == displayed_word[len(typed_letters)]:
-            print(f"{key.lower()} - 👍 (Green)")
-            typed_letters += key
-        else:
-            print(f"{key.lower()} - wrong, new word (Red)")
-            displayed_word = random.choice(current_words)
-            typed_letters = ""
+        spell_checker(key)
     elif key == " ":
-        if typed_letters == displayed_word:
-            print(f"{typed_letters} - is correct (Yellow)")
-        else:
-            print(f"{typed_letters} - wrong spelling (Red)")
+        next_word()
+
+    pass
+
+def spell_checker(k):
+    """
+    checks if the typed letter is the same as the next letter in the displayed word.
+    :param k: pressed key
+    :return:
+    """
+    global current_words, displayed_word, typed_letters
+
+    if k == displayed_word[len(typed_letters)]:
+        print(f"{k.lower()} - 👍 (Green)")
+        typed_letters += k
+    else:
+        print(f"{k.lower()} - wrong, new word (Red)")
         displayed_word = random.choice(current_words)
+        typed_letters = ""
+
+    pass
+
+def next_word():
+    global current_words, displayed_word, typed_letters
+
+    if typed_letters == displayed_word:
+        print(f"{typed_letters} - is correct (Yellow)")
+        typed_letters = ""
+    else:
+        print(f"{typed_letters} - wrong spelling (Red)")
+        typed_letters = ""
+    displayed_word = random.choice(current_words)
 
     pass
 
