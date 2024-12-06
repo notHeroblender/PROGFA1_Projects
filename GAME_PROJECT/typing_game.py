@@ -21,7 +21,11 @@ engine = pfe.ProgfaEngine(960, 540)
 # Set the frame rate to x frames per second:
 engine.set_fps(60)
 
-#GMEPLAY
+#START
+
+#END
+
+#GAMEPLAY
 #Visuals
 layers = []
 layer_amt = 5
@@ -38,12 +42,23 @@ easy_words = ["cat", "dog", "book", "tree", "star", "fish", "blue", "apple", "ch
 medium_words = []
 hard_words = []
 
+class GameState(Enum):
+    START = 0
+    PLAY = 1
+    END = 2
+
+current_state = GameState.PLAY
 
 def setup():
     """
     Only executed ONCE (at the start); use to load files and initialize.
     """
-    init_gameplay()
+    if current_state == GameState.PLAY:
+        init_gameplay()
+
+    pass
+
+def init_start():
 
     pass
 
@@ -58,10 +73,8 @@ def init_gameplay():
         layers.append(engine.load_image(f"Resources/{i + 1}.png"))
     for j in range(len(layers)):
         layers[j].resize(engine.width,engine.height,False)
-    #print(layers)
 
     player_img = engine.load_image("Resources/Run.png")
-    print(player_img)
     player_img.resize(1350, 200,True)
     player_sprite_width = player_img.width/9
 
@@ -77,9 +90,13 @@ def render():
     This function is being executed over and over, as fast as the frame rate. Use to draw (not update).
     """
 
-    #if Current_State = GameState.PLAY:
-    draw_visuals()
-    draw_game_text()
+    if current_state == GameState.PLAY:
+        draw_visuals()
+        draw_game_text()
+
+    pass
+
+def draw_start():
 
     pass
 
@@ -168,10 +185,11 @@ def key_up_event(key: str):
     This function is only executed once each time a key was released!
     Special keys have more than 1 character, for example ESCAPE, BACKSPACE, ENTER, ...
     """
-    if key.isalpha():
-        spell_checker(key)
-    elif key == " ":
-        next_word()
+    if current_state == GameState.PLAY:
+        if key.isalpha():
+            spell_checker(key)
+        elif key == " ":
+            next_word()
 
     pass
 
