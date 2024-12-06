@@ -46,7 +46,11 @@ def setup():
     pass
 
 def init_gameplay():
-    global player_img, current_words
+    """
+    puts the right values in the global variables needed for the gameplay
+    :return:
+    """
+    global player_img, current_words, player_img, layers
 
     for i in range(layer_amt):
         layers.append(engine.load_image(f"Resources/{i + 1}.png"))
@@ -54,8 +58,8 @@ def init_gameplay():
         layers[j].resize(engine.width,engine.height,False)
     #print(layers)
 
-    #player_img = engine.load_image("Resources/player.png")
-    #print(player_img)
+    player_img = engine.load_image("Resources/Run.png")
+    print(player_img)
 
     #set difficulty
     current_words.clear()
@@ -70,11 +74,6 @@ def render():
     """
 
     #if Current_State = GameState.PLAY:
-    draw_gameplay()
-
-    pass
-
-def draw_gameplay():
     draw_visuals()
     draw_game_text()
 
@@ -99,11 +98,15 @@ def draw_visuals():
 
     animate_parallax(1)
 
-    #player_img.draw(0, 0)
+    player_img.draw(0, 0)
 
     pass
 
 def draw_game_text():
+    """
+    draws words on the screen and colours them as you type
+    :return:
+    """
     global current_words,displayed_word,typed_letters
 
     #temp
@@ -190,6 +193,10 @@ def spell_checker(k):
     pass
 
 def next_word():
+    """
+    picks what to do when a new word is picked
+    :return:
+    """
     global current_words, displayed_word, typed_letters
 
     if typed_letters == displayed_word:
