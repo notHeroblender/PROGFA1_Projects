@@ -27,6 +27,13 @@ bg_img:ProgfaImage
 btn_img:ProgfaImage
 score = 0
 mistakes = 0
+btn_offset = 0
+btn_width = 0
+btn_height = 0
+start_btn_x = 0
+start_btn_y = 0
+quit_btn_x = 0
+quit_btn_y = 0
 
 #GAMEPLAY
 #Visuals
@@ -63,13 +70,25 @@ def setup():
     pass
 
 def init_start():
-    global bg_img, btn_img
+    global bg_img, btn_img,  btn_offset, btn_width, btn_height,\
+        start_btn_x, start_btn_y,\
+        quit_btn_x, quit_btn_y
 
     bg_img = engine.load_image("Resources/UI/bg.png")
     btn_img = engine.load_image("Resources/UI/btn.png")
 
     bg_img.resize(engine.width,engine.height,False)
     btn_img.resize(250,75,False)
+
+    start_btn_x = engine.width / 2 - (btn_img.width / 2)
+    start_btn_y = engine.height / 2 - (btn_img.height / 2)
+
+    quit_btn_x = engine.width / 2 - (btn_img.width / 2)
+    quit_btn_y = engine.height / 2 + btn_img.height / 2 + btn_offset
+
+    btn_offset = 10
+    btn_width = btn_img.width
+    btn_height = btn_img.height
 
     pass
 
@@ -116,17 +135,16 @@ def draw_start():
     draws the start menu background image with two buttons in the middle, one to start the game and one to quit the program
     :return:
     """
-    btn_offset = 10
     engine.color = 1,1,1
     engine.set_font_size(34)
 
     bg_img.draw(0,0)
 
-    btn_img.draw(engine.width/2-(btn_img.width/2),engine.height/2-btn_img.height/2)
+    btn_img.draw(start_btn_x, start_btn_y)
     engine.draw_text("START GAME", engine.width/2, engine.height/2, True)
-    btn_img.draw(engine.width/2-(btn_img.width/2),engine.height/2+btn_img.height/2+btn_offset)
-    engine.draw_text("QUIT", engine.width/2,engine.height/2+btn_img.height+btn_offset, True)
-    #btn_img.draw(engine.width/2-(btn_img.width/2),engine.height/2+btn_img.height*1.5+btn_offset*2)
+    btn_img.draw(quit_btn_x, quit_btn_y+btn_offset)
+    engine.draw_text("QUIT", engine.width/2,engine.height/2+btn_height+btn_offset, True)
+    
     pass
 
 def draw_visuals():
@@ -207,8 +225,11 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     """
     global current_state
     if current_state == GameState.START:
-        current_state = GameState.PLAY
-        next_word() #display starter word
+        if (start_btn_x < mouse_x < start_btn_x+btn_width) and (start_btn_y < mouse_y < start_btn_y+btn_height) :
+            current_state = GameState.PLAY
+            next_word() #display starter word
+        elif (quit_btn_x < mouse_x < quit_btn_x+btn_width) and (quit_btn_y+btn_offset < mouse_y < quit_btn_y+btn_height+btn_offset):
+            quit()
 
     pass
 
