@@ -208,6 +208,7 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     global current_state
     if current_state == GameState.START:
         current_state = GameState.PLAY
+        next_word() #display starter word
 
     pass
 
@@ -234,10 +235,11 @@ def spell_checker(k):
     :return:
     """
     global current_words, displayed_word, typed_letters, mistakes
-
     if k == displayed_word[len(typed_letters)]:
         print(f"{k.lower()} - 👍 (Green)")
         typed_letters += k
+        if displayed_word == typed_letters: #if word complete
+            next_word()
     else:
         print(f"{k.lower()} - wrong, new word (Red)")
         displayed_word = random.choice(current_words)
