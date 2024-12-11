@@ -144,7 +144,7 @@ def draw_start():
     engine.draw_text("START GAME", engine.width/2, engine.height/2, True)
     btn_img.draw(quit_btn_x, quit_btn_y+btn_offset)
     engine.draw_text("QUIT", engine.width/2,engine.height/2+btn_height+btn_offset, True)
-    
+
     pass
 
 def draw_visuals():
@@ -239,8 +239,11 @@ def key_up_event(key: str):
     This function is only executed once each time a key was released!
     Special keys have more than 1 character, for example ESCAPE, BACKSPACE, ENTER, ...
     """
+    global current_state
     if current_state == GameState.PLAY:
-        if key.isalpha():
+        if key == "ESCAPE":
+            current_state = GameState.START
+        elif key.isalpha():
             spell_checker(key)
         elif key == " ":
             next_word()
