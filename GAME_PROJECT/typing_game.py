@@ -245,8 +245,6 @@ def key_up_event(key: str):
             current_state = GameState.START
         elif key.isalpha():
             spell_checker(key)
-        elif key == " ":
-            next_word()
 
     print(f"score: {score}, mistakes: {mistakes}")
 
@@ -263,30 +261,38 @@ def spell_checker(k):
         print(f"{k.lower()} - 👍 (Green)")
         typed_letters += k
         if displayed_word == typed_letters: #if word complete
+            score_handler(1)
             next_word()
     else:
-        print(f"{k.lower()} - wrong, new word (Red)")
-        displayed_word = random.choice(current_words)
-        typed_letters = ""
-        mistakes += 1
+        print(f"{k.lower()} - wrong, try again (Red)")
+        score_handler(-1)
 
     pass
+
+def score_handler(points:int):
+    """
+    calculates the score by checking is the word is correct or not.
+    :param points:
+    :return:
+    """
+    global score, mistakes
+
+    if typed_letters == displayed_word:
+        print(f"{typed_letters} - is correct (Yellow)")
+        score += points
+    else:
+        print(f"{typed_letters} - wrong spelling (Red)")
+        score += points
+        mistakes -= points
 
 def next_word():
     """
     picks what to do when a new word is picked
     :return:
     """
-    global current_words, displayed_word, typed_letters, score, mistakes
+    global current_words, displayed_word, typed_letters
 
-    if typed_letters == displayed_word:
-        print(f"{typed_letters} - is correct (Yellow)")
-        typed_letters = ""
-        score += 1
-    else:
-        print(f"{typed_letters} - wrong spelling (Red)")
-        typed_letters = ""
-        mistakes += 1
+    typed_letters = ""
     displayed_word = random.choice(current_words)
 
     pass
