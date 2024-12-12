@@ -46,6 +46,9 @@ list_x_pos = []
 #Logic
 typed_letters = ""
 displayed_word = ""
+displayed_words = []
+max_word_amt = 0
+focused_word_idx = 0
 current_words = []
 easy_words = ["cat", "dog", "book", "tree", "star", "fish", "blue", "apple", "chair", "house", "train",
               "light", "happy", "mouse", "plane", "smile", "paper", "cloud", "water", "horse"]
@@ -100,7 +103,7 @@ def init_gameplay():
     puts the right values in the global variables needed for the gameplay
     :return:
     """
-    global player_img, current_words, player_img, layers, player_sprite_width
+    global player_img, layers, player_sprite_width, current_words, max_word_amt, focused_word_idx
 
     for i in range(layer_amt):
         layers.append(engine.load_image(f"Resources/{i + 1}.png"))
@@ -114,6 +117,9 @@ def init_gameplay():
     #set difficulty
     current_words.clear()
     current_words.extend(easy_words)
+
+    max_word_amt = 5
+    focused_word_idx = -1
 
     pass
 
@@ -177,11 +183,12 @@ def draw_game_text():
     """
     global current_words,displayed_word,typed_letters
 
-    engine.set_font_size(20)
-    engine.color = 1,1,1
-    engine.draw_text(displayed_word, engine.width/2,engine.height/2)
+    for i, (word, x, y) in enumerate(displayed_words):
+        engine.set_font_size(20)
+        engine.color = 1, 1, 1
+        engine.draw_text(word, x, y)
 
-    #draws green regardless if correct or not
+    #draws green over the word
     engine.color = 0,1,0
     engine.draw_text(typed_letters, engine.width/2,engine.height/2)
 
@@ -227,7 +234,7 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     if current_state == GameState.START:
         if (start_btn_x < mouse_x < start_btn_x+btn_width) and (start_btn_y < mouse_y < start_btn_y+btn_height) :
             current_state = GameState.PLAY
-            next_word() #display starter word
+            add_word() #display starter word
         elif (quit_btn_x < mouse_x < quit_btn_x+btn_width) and (quit_btn_y+btn_offset < mouse_y < quit_btn_y+btn_height+btn_offset):
             quit()
 
@@ -262,7 +269,7 @@ def spell_checker(k):
         typed_letters += k
         if displayed_word == typed_letters: #if word complete
             score_handler(1)
-            next_word()
+            add_word()
     else:
         print(f"{k.lower()} - wrong, try again (Red)")
         score_handler(-1)
@@ -287,7 +294,7 @@ def score_handler(points:int):
 
 def next_word():
     """
-    picks what to do when a new word is picked
+    resets typed letters and picks a new word to display
     :return:
     """
     global current_words, displayed_word, typed_letters
@@ -296,6 +303,19 @@ def next_word():
     displayed_word = random.choice(current_words)
 
     pass
+
+def add_word():
+    """
+    adds a new word on the screen in a random position. Only if there is fewer words than the maximum words allowed
+    :return:
+    """
+    global displayed_words, current_words, max_word_amt
+
+    if len(displayed_words) < max_word_amt:
+        word = random.choice(current_words)
+        x = random.randint(engine.width // 2, engine.width - 50)
+        y = random.randint(50, engine.height - 50)
+        displayed_words.append((word, x, y))
 
 
 # Engine stuff; best not to mess with this:
