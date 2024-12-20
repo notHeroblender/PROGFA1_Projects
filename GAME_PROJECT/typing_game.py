@@ -146,12 +146,6 @@ def init_gameplay():
     player_img.resize(1350, 200,True)
     player_sprite_width = player_img.width/9
 
-    #set difficulty
-    current_words.clear()
-    current_words.extend(easy_words)
-    current_words.extend(medium_words)
-    current_words.extend(hard_words)
-
     max_word_amt = 5
     focused_word_idx = -1
 
@@ -304,13 +298,36 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     """
     global current_state
     if current_state == GameState.START:
-        if (start_btn_x < mouse_x < start_btn_x+btn_width) and (start_btn_y < mouse_y < start_btn_y+btn_height) :
+        if (easy_btn_x < mouse_x < easy_btn_x+diff_btn_width) and (diff_btn_y<mouse_y<diff_btn_y+btn_height):
+            print("easy chosen")
+            pick_difficulty(1)
             current_state = GameState.PLAY
-            add_word() #display starter word
+        elif (medium_btn_x < mouse_x < medium_btn_x+diff_btn_width) and (diff_btn_y<mouse_y<diff_btn_y+btn_height):
+            print("medium chosen")
+            pick_difficulty(2)
+            current_state = GameState.PLAY
+        elif (hard_btn_x < mouse_x < hard_btn_x+diff_btn_width) and (diff_btn_y<mouse_y<diff_btn_y+btn_height):
+            print("hard chosen")
+            pick_difficulty(3)
+            current_state = GameState.PLAY
         elif (quit_btn_x < mouse_x < quit_btn_x+btn_width) and (quit_btn_y+btn_offset < mouse_y < quit_btn_y+btn_height+btn_offset):
             quit()
 
     pass
+
+def pick_difficulty(idx:int):
+    match idx:
+        case 1:
+            current_words.clear()
+            current_words.extend(easy_words)
+        case 2:
+            current_words.clear()
+            current_words.extend(medium_words)
+        case 3:
+            current_words.clear()
+            current_words.extend(hard_words)
+    pass
+
 
 
 def key_up_event(key: str):
