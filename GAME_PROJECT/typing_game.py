@@ -51,10 +51,23 @@ displayed_words = []
 max_word_amt = 0
 focused_word_idx = 0
 current_words = []
-easy_words = ["cat", "dog", "book", "tree", "star", "fish", "blue", "apple", "chair", "house", "train",
-              "light", "happy", "mouse", "plane", "smile", "paper", "cloud", "water", "horse"]
-medium_words = []
-hard_words = []
+easy_words = [
+    "cat", "dog", "book", "tree", "star", "fish", "blue", "apple", "chair", "house", "train",
+    "light", "happy", "mouse", "plane", "smile", "paper", "cloud", "water", "horse", "cup",
+    "ball", "green", "jump", "table", "dance", "piano", "rain", "door", "car", "bread", "baby",
+    "bird", "snow", "school", "clock", "phone", "bed", "shoe", "cake"]
+medium_words = [
+    "pencil", "window", "flower", "garden", "silver", "bridge", "laptop", "orange", "pirate", "rocket",
+    "castle", "jungle", "planet", "wizard", "saddle", "sunset", "shadow", "forest", "basket", "thunder",
+    "helmet", "camera", "mirror", "statue", "breeze", "lantern", "tunnel", "village", "eagle", "whisper",
+    "luggage", "trophy", "dragon", "stream", "compass", "parrot", "crystal", "guitar", "harvest", "island"]
+hard_words = [
+    "quizzical", "xylophone", "jubilant", "subtlety", "chrysanthemum", "encyclopedia", "ambiguity",
+    "juxtapose", "vortex", "zeppelin", "facetious", "haphazard", "syzygy", "phosphorescent", "labyrinthine",
+    "dichotomy", "ephemeral", "persnickety", "onomatopoeia", "fluorescent", "ineffable", "obfuscate",
+    "proclivity", "mellifluous", "antediluvian", "preposterous", "conundrum", "effervescent", "serendipity",
+    "transcendent", "cacophony", "apocryphal", "ethereal", "sanguine", "idiosyncrasy", "zeitgeist", "epiphany",
+    "nefarious", "lugubrious", "iridescent"]
 
 speed = 0
 default_speed = 0
@@ -126,6 +139,8 @@ def init_gameplay():
     #set difficulty
     current_words.clear()
     current_words.extend(easy_words)
+    current_words.extend(medium_words)
+    current_words.extend(hard_words)
 
     max_word_amt = 5
     focused_word_idx = -1
@@ -247,7 +262,7 @@ def evaluate():
     if current_state == GameState.PLAY:
         add_word()
         speed_handler()
-        
+
     pass
 
 def speed_handler():
