@@ -26,6 +26,7 @@ engine.set_fps(60)
 #UI
 bg_img:ProgfaImage
 btn_img:ProgfaImage
+diff_btn_img:ProgfaImage
 score = 0
 mistakes = 0
 btn_offset = 0
@@ -35,6 +36,11 @@ start_btn_x = 0
 start_btn_y = 0
 quit_btn_x = 0
 quit_btn_y = 0
+diff_btn_width = 0
+diff_btn_y = 0
+easy_btn_x = 0
+medium_btn_x = 0
+hard_btn_x = 0
 
 #GAMEPLAY
 #Visuals
@@ -94,18 +100,17 @@ def setup():
     pass
 
 def init_start():
-    global bg_img, btn_img,  btn_offset, btn_width, btn_height,\
-        start_btn_x, start_btn_y,\
-        quit_btn_x, quit_btn_y
+    global bg_img, btn_img, diff_btn_img, btn_offset, btn_width, btn_height,\
+        start_btn_x, start_btn_y, quit_btn_x, quit_btn_y,\
+        diff_btn_width, diff_btn_y, easy_btn_x,medium_btn_x,hard_btn_x
 
     bg_img = engine.load_image("Resources/UI/bg.png")
     btn_img = engine.load_image("Resources/UI/btn.png")
+    diff_btn_img = engine.load_image("Resources/UI/btn.png")
 
     bg_img.resize(engine.width,engine.height,False)
     btn_img.resize(250,75,False)
-
-    start_btn_x = engine.width / 2 - (btn_img.width / 2)
-    start_btn_y = engine.height / 2 - (btn_img.height / 2)
+    diff_btn_img.resize(250*2/3,75,False)
 
     quit_btn_x = engine.width / 2 - (btn_img.width / 2)
     quit_btn_y = engine.height / 2 + btn_img.height / 2 + btn_offset
@@ -113,6 +118,11 @@ def init_start():
     btn_offset = 10
     btn_width = btn_img.width
     btn_height = btn_img.height
+    diff_btn_width = btn_img.width*2/3
+    diff_btn_y = engine.height / 2 - (btn_img.height / 2)
+    easy_btn_x = engine.width / 2 - (diff_btn_img.width / 2) - diff_btn_width - btn_offset
+    medium_btn_x = engine.width / 2 - (diff_btn_img.width / 2)
+    hard_btn_x = engine.width / 2 - (diff_btn_img.width / 2) + diff_btn_width + btn_offset
 
     pass
 
@@ -177,8 +187,15 @@ def draw_start():
 
     bg_img.draw(0,0)
 
-    btn_img.draw(start_btn_x, start_btn_y)
-    engine.draw_text("START GAME", engine.width/2, engine.height/2, True)
+    diff_btn_img.draw(easy_btn_x,diff_btn_y)
+    engine.draw_text("EASY", easy_btn_x+diff_btn_width/2, diff_btn_y+btn_height/2,True)
+
+    diff_btn_img.draw(medium_btn_x,diff_btn_y)
+    engine.draw_text("MEDIUM",medium_btn_x+diff_btn_width/2,diff_btn_y+btn_height/2,True)
+
+    diff_btn_img.draw(hard_btn_x,diff_btn_y)
+    engine.draw_text("HARD",hard_btn_x+diff_btn_width/2,diff_btn_y+btn_height/2,True)
+
     btn_img.draw(quit_btn_x, quit_btn_y+btn_offset)
     engine.draw_text("QUIT", engine.width/2,engine.height/2+btn_height+btn_offset, True)
 
