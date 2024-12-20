@@ -181,16 +181,19 @@ def draw_game_text():
     draws words on the screen and colours them as you type
     :return:
     """
-    global current_words,displayed_word,typed_letters
+    global current_words,displayed_word,typed_letters, displayed_words, focused_word_idx
+
+    engine.set_font_size(20)
 
     for i, (word, x, y) in enumerate(displayed_words):
-        engine.set_font_size(20)
         engine.color = 1, 1, 1
         engine.draw_text(word, x, y)
 
     #draws green over the word
-    engine.color = 0,1,0
-    engine.draw_text(typed_letters, engine.width/2,engine.height/2)
+    if focused_word_idx != -1:
+        word,x,y = displayed_words[focused_word_idx]
+        engine.color = 0, 1, 0
+        engine.draw_text(typed_letters, x, y)
 
     pass
 
@@ -222,7 +225,7 @@ def evaluate():
     """
     This function is being executed over and over, as fast as the frame rate. Use to update (not draw).
     """
-
+    add_word()
     pass
 
 
@@ -252,6 +255,8 @@ def key_up_event(key: str):
             current_state = GameState.START
         elif key.isalpha():
             spell_checker(key)
+        #elif key == " ":
+        #    add_word()
 
     print(f"score: {score}, mistakes: {mistakes}")
 
@@ -263,14 +268,38 @@ def spell_checker(k):
     :param k: pressed key
     :return:
     """
-    global current_words, displayed_word, typed_letters, mistakes
-    if k == displayed_word[len(typed_letters)]:
+    global current_words, displayed_word, displayed_words, focused_word_idx, typed_letters, mistakes
+
+    if focused_word_idx == -1: #no word focused
+        for i, (word, x, y) in enumerate(displayed_words):
+            if word.startswith(k):
+                focused_word_idx = i
+                typed_letters = k
+                return
+        print(f"{k.lower()} - no words start with that (Red)")
+        score_handler(-1)
+        return
+
+    # Check the focused word
+    word, x, y = displayed_words[focused_word_idx]
+    if k == word[len(typed_letters)]:
         print(f"{k.lower()} - 👍 (Green)")
         typed_letters += k
-        if displayed_word == typed_letters: #if word complete
+        if word == typed_letters: #if word complete
+            print(f"{word} - correct spelling (Green)")
+            displayed_words.pop(focused_word_idx)
+            focused_word_idx = -1
             score_handler(1)
-            add_word()
+            typed_letters = ""
+            if len(displayed_words) == 0:
+                add_word()
     else:
+        for i, (new_word, x, y) in enumerate(displayed_words):
+            if i != focused_word_idx and new_word.startswith(typed_letters + k):
+                print(f"{k} - switching word")
+                focused_word_idx = i
+                typed_letters += k
+                return
         print(f"{k.lower()} - wrong, try again (Red)")
         score_handler(-1)
 
@@ -284,12 +313,15 @@ def score_handler(points:int):
     """
     global score, mistakes
 
-    if typed_letters == displayed_word:
-        print(f"{typed_letters} - is correct (Yellow)")
-        score += points
-    else:
-        print(f"{typed_letters} - wrong spelling (Red)")
-        score += points
+    # if typed_letters == displayed_word:
+    #     print(f"{typed_letters} - is correct (Yellow)")
+    #     score += points
+    # else:
+    #     print(f"{typed_letters} - wrong spelling (Red)")
+    #     score += points
+    #     mistakes -= points
+    score += points
+    if points < 0:
         mistakes -= points
 
 def next_word():
