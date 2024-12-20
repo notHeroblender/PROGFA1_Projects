@@ -5,6 +5,7 @@ Created on 26/11/2024
 
 @author: pinne
 """
+from email.policy import default
 
 import dae_progfa_lib as pfe
 from dae_progfa_lib import ShapeMode, MouseButton
@@ -55,6 +56,13 @@ easy_words = ["cat", "dog", "book", "tree", "star", "fish", "blue", "apple", "ch
 medium_words = []
 hard_words = []
 
+speed = 0
+default_speed = 0
+speed_incr = 0
+speed_decr = 0
+speed_time = 0
+speed_timer = 0
+
 class GameState(Enum):
     START = 0
     PLAY = 1
@@ -103,7 +111,8 @@ def init_gameplay():
     puts the right values in the global variables needed for the gameplay
     :return:
     """
-    global player_img, layers, player_sprite_width, current_words, max_word_amt, focused_word_idx
+    global player_img, layers, player_sprite_width, current_words, max_word_amt, focused_word_idx, \
+        speed, default_speed, speed_incr, speed_decr, speed_time, speed_timer
 
     for i in range(layer_amt):
         layers.append(engine.load_image(f"Resources/{i + 1}.png"))
@@ -120,6 +129,13 @@ def init_gameplay():
 
     max_word_amt = 5
     focused_word_idx = -1
+
+    speed = 1
+    default_speed = 1
+    speed_incr = 1
+    speed_decr = .4
+    speed_time = 120 #frames, 2s
+    speed_timer = 0
 
     pass
 
@@ -158,7 +174,7 @@ def draw_visuals():
     draws the visuals (background and player)
     :return:
     """
-    global player_img, player_sprite_width
+    global player_img, player_sprite_width, speed
 
     engine.background_color = (0.5607843137254902, 0.8235294117647058, 0.2980392156862745)
 
@@ -170,7 +186,7 @@ def draw_visuals():
         layers[i].draw(list_x_pos[2 * i], 0)  # 0,2,4...
         layers[i].draw(list_x_pos[2 * i + 1], 0)  # 1,3,5...
 
-    animate_parallax(1)
+    animate_parallax(speed)
 
     player_img.draw_partial(60,ground_height,(0,0,player_img.height,player_sprite_width))
 
@@ -203,15 +219,17 @@ def animate_parallax(speed_multiplier):
     :return:
     """
     global list_x_pos
-    default_speed = 2
+
+    dflt_spd = 2
+
     offset = engine.width
 
     for i in range(0,len(list_x_pos),2):
         layer_nr = i//2 #0=0,1=0,2=1,3=1,4=2,5=2...
 
-        speed = default_speed*(layer_nr+speed_multiplier)
-        list_x_pos[i] -= speed
-        list_x_pos[i+1] -= speed
+        spd = dflt_spd*(layer_nr+speed_multiplier)
+        list_x_pos[i] -= spd
+        list_x_pos[i+1] -= spd
 
         if list_x_pos[i] <= -offset:
             list_x_pos[i] += engine.width*2
@@ -225,7 +243,26 @@ def evaluate():
     """
     This function is being executed over and over, as fast as the frame rate. Use to update (not draw).
     """
-    add_word()
+
+    if current_state == GameState.PLAY:
+        add_word()
+        speed_handler()
+        
+    pass
+
+def speed_handler():
+    """
+    counts down the timer and resets the speed when the timer hits 0.
+    :return:
+    """
+    global speed_timer, speed
+
+    if speed_timer > 0:
+        speed_timer -= 1
+        if speed_timer == 0:
+            speed = default_speed
+            print(f"going back to speed: {speed}")
+
     pass
 
 
@@ -268,7 +305,7 @@ def spell_checker(k):
     :param k: pressed key
     :return:
     """
-    global current_words, displayed_word, displayed_words, focused_word_idx, typed_letters, mistakes
+    global current_words, displayed_word, displayed_words, focused_word_idx, typed_letters, mistakes, speed
 
     if focused_word_idx == -1: #no word focused
         for i, (word, x, y) in enumerate(displayed_words):
@@ -311,18 +348,22 @@ def score_handler(points:int):
     :param points:
     :return:
     """
-    global score, mistakes
+    global score, mistakes, speed, speed_timer
 
-    # if typed_letters == displayed_word:
-    #     print(f"{typed_letters} - is correct (Yellow)")
-    #     score += points
-    # else:
-    #     print(f"{typed_letters} - wrong spelling (Red)")
-    #     score += points
-    #     mistakes -= points
     score += points
+
+    if points >= 0:
+        speed += speed_incr
+        speed_timer = speed_time #start speeding
+        print(f"speed: {speed}, timer: {speed_timer} ")
     if points < 0:
         mistakes -= points
+        if not speed >= speed_decr:
+            speed -= speed_decr
+        speed_timer = speed_time #start slowing
+        print(f"speed: {speed}, timer: {speed_timer} ")
+
+    pass
 
 def next_word():
     """
