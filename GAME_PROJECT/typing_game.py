@@ -127,6 +127,7 @@ def init_start():
     pass
 
 def init_end():
+    #TODO: draw end screen
     pass
 
 def init_gameplay():
