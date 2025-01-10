@@ -76,8 +76,8 @@ hard_words = [
 
 speed = 0
 default_speed = 0
-speed_incr = 0
-speed_decr = 0
+speed_incr = 0 #added when boosting
+speed_decr = 0 #removed when slowing (?)
 speed_time = 0
 speed_timer = 0
 boost_lines_y = []
@@ -103,6 +103,9 @@ def setup():
     pass
 
 def init_start():
+    """
+    puts the right values in the global variables needed for the start screen
+    """
     global bg_img, btn_img, diff_btn_img, btn_offset, btn_width, btn_height,\
         start_btn_x, start_btn_y, quit_btn_x, quit_btn_y,\
         diff_btn_width, diff_btn_y, easy_btn_x,medium_btn_x,hard_btn_x
@@ -130,13 +133,15 @@ def init_start():
     pass
 
 def init_end():
+    """
+    puts the right values in the global variables needed for the end screen
+    """
     #TODO: draw end screen
     pass
 
 def init_gameplay():
     """
     puts the right values in the global variables needed for the gameplay
-    :return:
     """
     global player_img, layers, player_sprite_width, current_words, max_word_amt, focused_word_idx, \
         speed, default_speed, speed_incr, speed_decr, speed_time, speed_timer, \
@@ -174,6 +179,7 @@ def render():
     """
     This function is being executed over and over, as fast as the frame rate. Use to draw (not update).
     """
+
     if current_state == GameState.START:
         draw_start()
     if current_state == GameState.PLAY:
@@ -187,6 +193,7 @@ def draw_start():
     draws the start menu background image with two buttons in the middle, one to start the game and one to quit the program
     :return:
     """
+
     engine.color = 1,1,1
     engine.set_font_size(34)
 
@@ -282,7 +289,6 @@ def draw_boost_effect():
     """
     global boost_lines_y, boost_lines_x, boost_lines_offset
 
-    #TODO:
     line_length = engine.width/5
 
     engine.color = 1,1,1
@@ -299,7 +305,6 @@ def evaluate():
     """
     This function is being executed over and over, as fast as the frame rate. Use to update (not draw).
     """
-
     if current_state == GameState.PLAY:
         add_word()
         speed_handler()
@@ -327,7 +332,6 @@ def animate_boost_effect():
     """
     adds to the x pos of every line. when they go off-screen, they get reset with a new x and y value.
     """
-
     global boost_lines_offset, boost_lines_x, boost_lines_y
 
     for i in range(len(boost_lines_x)): #loop over
@@ -343,6 +347,7 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     This function is only executed once each time a mouse button was pressed!
     """
     global current_state
+
     if current_state == GameState.START:
         if (easy_btn_x < mouse_x < easy_btn_x+diff_btn_width) and (diff_btn_y<mouse_y<diff_btn_y+btn_height):
             print("easy chosen")
@@ -362,18 +367,24 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     pass
 
 def pick_difficulty(idx:int):
+    """
+    adds words to the list of words to use. harder difficulties include easier difficulties.
+    """
+
     match idx:
         case 1:
             current_words.clear()
             current_words.extend(easy_words)
         case 2:
             current_words.clear()
+            current_words.extend(easy_words)
             current_words.extend(medium_words)
         case 3:
             current_words.clear()
+            current_words.extend(easy_words)
+            current_words.extend(medium_words)
             current_words.extend(hard_words)
     pass
-
 
 
 def key_up_event(key: str):
@@ -382,6 +393,7 @@ def key_up_event(key: str):
     Special keys have more than 1 character, for example ESCAPE, BACKSPACE, ENTER, ...
     """
     global current_state
+
     if current_state == GameState.PLAY:
         if key == "ESCAPE":
             current_state = GameState.START
@@ -484,6 +496,8 @@ def add_word():
         x = random.randint(engine.width // 2, engine.width - 50)
         y = random.randint(50, engine.height - 50)
         displayed_words.append((word, x, y))
+
+    pass
 
 
 # Engine stuff; best not to mess with this:
