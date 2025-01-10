@@ -5,7 +5,6 @@ Created on 26/11/2024
 
 @author: pinne
 """
-from email.policy import default
 
 import dae_progfa_lib as pfe
 from dae_progfa_lib import ShapeMode, MouseButton
@@ -81,6 +80,10 @@ speed_incr = 0
 speed_decr = 0
 speed_time = 0
 speed_timer = 0
+boost_lines_y = []
+boost_lines_x = []
+boost_lines_amt = 0 #how many lines
+boost_lines_offset = 0 #random added value for x pos
 
 class GameState(Enum):
     START = 0
@@ -136,7 +139,8 @@ def init_gameplay():
     :return:
     """
     global player_img, layers, player_sprite_width, current_words, max_word_amt, focused_word_idx, \
-        speed, default_speed, speed_incr, speed_decr, speed_time, speed_timer
+        speed, default_speed, speed_incr, speed_decr, speed_time, speed_timer, \
+        boost_lines_amt, boost_lines_y, boost_lines_x, boost_lines_offset
 
     for i in range(layer_amt):
         layers.append(engine.load_image(f"Resources/{i + 1}.png"))
@@ -154,8 +158,14 @@ def init_gameplay():
     default_speed = 1
     speed_incr = 1
     speed_decr = .4
-    speed_time = 120 #frames, 2s
+    speed_time = 60 #frames, 2s
     speed_timer = 0
+
+    boost_lines_amt = 5
+    for i in range(boost_lines_amt):
+        boost_lines_y.append(random.randint(5, engine.height-5))
+        boost_lines_x.append(random.randint(int(engine.width/2),engine.width))
+    boost_lines_offset = 0
 
     pass
 
@@ -213,7 +223,8 @@ def draw_visuals():
         layers[i].draw(list_x_pos[2 * i], 0)  # 0,2,4...
         layers[i].draw(list_x_pos[2 * i + 1], 0)  # 1,3,5...
 
-    animate_parallax(speed)
+    if speed > default_speed:
+        draw_boost_effect()
 
     player_img.draw_partial(60,ground_height,(0,0,player_img.height,player_sprite_width))
 
@@ -265,6 +276,24 @@ def animate_parallax(speed_multiplier):
 
     pass
 
+def draw_boost_effect():
+    """
+    draws speed lines on the screen
+    """
+    global boost_lines_y, boost_lines_x, boost_lines_offset
+
+    #TODO:
+    line_length = engine.width/5
+
+    engine.color = 1,1,1
+    engine.outline_color = 1,1,1
+
+    for x, y in zip(boost_lines_x,boost_lines_y):
+        engine.draw_line(engine.width+x-boost_lines_offset,y,
+                         engine.width+x+line_length-boost_lines_offset,y,2)
+
+    pass
+
 
 def evaluate():
     """
@@ -274,6 +303,8 @@ def evaluate():
     if current_state == GameState.PLAY:
         add_word()
         speed_handler()
+        animate_parallax(speed)
+        animate_boost_effect()
 
     pass
 
@@ -292,6 +323,20 @@ def speed_handler():
 
     pass
 
+def animate_boost_effect():
+    """
+    adds to the x pos of every line. when they go off-screen, they get reset with a new x and y value.
+    """
+
+    global boost_lines_offset, boost_lines_x, boost_lines_y
+
+    for i in range(len(boost_lines_x)): #loop over
+        boost_lines_x[i] -= speed*10
+        if boost_lines_x[i] < 0 - engine.width - (engine.width/5): #reset out of bounds lines
+            boost_lines_x[i] += engine.width
+            boost_lines_y[i] = random.randint(5, engine.height-5)
+
+    pass
 
 def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     """
