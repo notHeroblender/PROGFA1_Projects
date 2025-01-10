@@ -213,6 +213,10 @@ def draw_start():
 
     pass
 
+def draw_end():
+    #TODO:
+    pass
+
 def draw_visuals():
     """
     draws the visuals (background and player)
@@ -399,8 +403,6 @@ def key_up_event(key: str):
             current_state = GameState.START
         elif key.isalpha():
             spell_checker(key)
-        #elif key == " ":
-        #    add_word()
 
     print(f"score: {score}, mistakes: {mistakes}")
 
@@ -420,20 +422,19 @@ def spell_checker(k):
                 focused_word_idx = i
                 typed_letters = k
                 return
-        print(f"{k.lower()} - no words start with that (Red)")
-        score_handler(-1)
+        print(f"{k.lower()} - no words start with that")
         return
 
     # Check the focused word
     word, x, y = displayed_words[focused_word_idx]
     if k == word[len(typed_letters)]:
-        print(f"{k.lower()} - 👍 (Green)")
+        print(f"{k.lower()} - 👍")
         typed_letters += k
         if word == typed_letters: #if word complete
-            print(f"{word} - correct spelling (Green)")
+            print(f"{word} - correct spelling")
             displayed_words.pop(focused_word_idx)
             focused_word_idx = -1
-            score_handler(1)
+            score_handler(5)
             typed_letters = ""
             if len(displayed_words) == 0:
                 add_word()
@@ -444,7 +445,7 @@ def spell_checker(k):
                 focused_word_idx = i
                 typed_letters += k
                 return
-        print(f"{k.lower()} - wrong, try again (Red)")
+        print(f"{k.lower()} - wrong, try again")
         score_handler(-1)
 
     pass
