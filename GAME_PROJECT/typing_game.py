@@ -49,6 +49,10 @@ player_img:ProgfaImage
 player_sprite_width = 0
 ground_height = engine.height - 160
 list_x_pos = []
+boost_lines_y = []
+boost_lines_x = []
+boost_lines_amt = 0 #how many lines
+boost_lines_offset = 0 #random added value for x pos
 #Logic
 typed_letters = ""
 displayed_word = ""
@@ -80,10 +84,7 @@ speed_incr = 0 #added when boosting
 speed_decr = 0 #removed when slowing (?)
 speed_time = 0
 speed_timer = 0
-boost_lines_y = []
-boost_lines_x = []
-boost_lines_amt = 0 #how many lines
-boost_lines_offset = 0 #random added value for x pos
+score_multiplier = 0
 
 class GameState(Enum):
     START = 0
@@ -431,13 +432,7 @@ def spell_checker(k):
         print(f"{k.lower()} - 👍")
         typed_letters += k
         if word == typed_letters: #if word complete
-            print(f"{word} - correct spelling")
-            displayed_words.pop(focused_word_idx)
-            focused_word_idx = -1
-            score_handler(5)
-            typed_letters = ""
-            if len(displayed_words) == 0:
-                add_word()
+            word_complete()
     else:
         for i, (new_word, x, y) in enumerate(displayed_words):
             if i != focused_word_idx and new_word.startswith(typed_letters + k):
@@ -450,6 +445,22 @@ def spell_checker(k):
 
     pass
 
+def word_complete():
+    global focused_word_idx, typed_letters, displayed_words
+
+    word, x, y = displayed_words[focused_word_idx]
+
+    print(f"{word} - correct spelling")
+    displayed_words.pop(focused_word_idx)
+    focused_word_idx = -1
+    check_word_difficulty()
+    score_handler(5)
+    typed_letters = ""
+    if len(displayed_words) == 0:
+        add_word()
+
+    pass
+
 def score_handler(points:int):
     """
     calculates the score by checking is the word is correct or not.
@@ -458,7 +469,7 @@ def score_handler(points:int):
     """
     global score, mistakes, speed, speed_timer
 
-    score += points
+    score += points * score_multiplier
 
     if points >= 0:
         speed += speed_incr
@@ -470,6 +481,21 @@ def score_handler(points:int):
             speed -= speed_decr
         speed_timer = speed_time #start slowing
         print(f"speed: {speed}, timer: {speed_timer} ")
+
+    pass
+
+def check_word_difficulty():
+    """
+    sets the score multiplier according to the word that was just typed.
+    """
+    global score_multiplier
+
+    if typed_letters in medium_words:
+        score_multiplier = 2
+    elif typed_letters in hard_words:
+        score_multiplier = 4
+    else:
+        score_multiplier = 1
 
     pass
 
