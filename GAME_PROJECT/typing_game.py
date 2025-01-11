@@ -171,7 +171,7 @@ def init_gameplay():
     default_speed = 1
     speed_incr = 1
     speed_decr = .4
-    speed_time = 60 #frames, 2s
+    speed_time = 60 #frames, 1s
     speed_timer = 0
 
     boost_lines_amt = 5
@@ -226,8 +226,11 @@ def draw_start():
 def draw_end():
     global end_img
     #TODO:
-    engine.shape_mode = ShapeMode.CORNER
-    end_img.draw(0,0)
+
+    rnd_x = random.randint(0,engine.width)
+    rnd_y = random.randint(0, engine.height)
+
+    end_img.draw(rnd_x-end_img.width/2,rnd_y-end_img.height/2)
     pass
 
 def draw_visuals():
@@ -413,7 +416,7 @@ def key_up_event(key: str):
 
     if key == "ESCAPE":
         current_state = GameState.START
-    
+
     if current_state == GameState.PLAY:
         if key.isalpha():
             spell_checker(key)
