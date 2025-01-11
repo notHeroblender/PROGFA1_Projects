@@ -86,6 +86,9 @@ speed_time = 0
 speed_timer = 0
 score_multiplier = 0
 
+#END
+end_img:ProgfaImage
+
 class GameState(Enum):
     START = 0
     PLAY = 1
@@ -137,7 +140,11 @@ def init_end():
     """
     puts the right values in the global variables needed for the end screen
     """
-    #TODO: draw end screen
+    global end_img
+    #TODO:
+    end_img = engine.load_image("Resources/emoji.png")
+    end_img.resize(engine.width,engine.height,False)
+
     pass
 
 def init_gameplay():
@@ -186,6 +193,8 @@ def render():
     if current_state == GameState.PLAY:
         draw_visuals()
         draw_game_text()
+    if current_state == GameState.END:
+        draw_end()
 
     pass
 
@@ -215,7 +224,10 @@ def draw_start():
     pass
 
 def draw_end():
+    global end_img
     #TODO:
+    engine.shape_mode = ShapeMode.CORNER
+    end_img.draw(0,0)
     pass
 
 def draw_visuals():
@@ -399,13 +411,15 @@ def key_up_event(key: str):
     """
     global current_state
 
+    if key == "ESCAPE":
+        current_state = GameState.START
+    
     if current_state == GameState.PLAY:
-        if key == "ESCAPE":
-            current_state = GameState.START
-        elif key.isalpha():
+        if key.isalpha():
             spell_checker(key)
-
-    print(f"score: {score}, mistakes: {mistakes}")
+            print(f"score: {score}, mistakes: {mistakes}")
+    if current_state == GameState.END:
+        print("you can stop typing now, the game is over...")
 
     pass
 
@@ -475,6 +489,7 @@ def score_handler(points:int):
         speed += speed_incr
         speed_timer = speed_time #start speeding
         print(f"speed: {speed}, timer: {speed_timer} ")
+        check_game_end()
     if points < 0:
         mistakes -= points
         if not speed >= speed_decr:
@@ -496,6 +511,18 @@ def check_word_difficulty():
         score_multiplier = 4
     else:
         score_multiplier = 1
+
+    pass
+
+def check_game_end():
+    """
+    checks if the game time has ran out and changes the gamestate if necessary.
+    """
+    global current_state
+    #TODO: change condition
+    if score > 20:
+        print(f"congratulations, end of the game! score: {score}")
+        current_state = GameState.END
 
     pass
 
