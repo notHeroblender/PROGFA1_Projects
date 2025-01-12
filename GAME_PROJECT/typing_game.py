@@ -61,22 +61,45 @@ max_word_amt = 0
 focused_word_idx = 0
 current_words = []
 easy_words = [
-    "cat", "dog", "book", "tree", "star", "fish", "blue", "apple", "chair", "house", "train",
-    "light", "happy", "mouse", "plane", "smile", "paper", "cloud", "water", "horse", "cup",
-    "ball", "green", "jump", "table", "dance", "piano", "rain", "door", "car", "bread", "baby",
-    "bird", "snow", "school", "clock", "phone", "bed", "shoe", "cake"]
+    "cat", "dog", "sun", "moon", "star", "ball", "tree", "book", "fish", "bird", "red", "blue", "green", "run", "jump",
+    "play", "happy", "funny", "house", "cake", "milk", "chair", "table", "apple", "banana", "car", "train", "park",
+    "sky", "rain", "snow", "sleep", "smile", "friend", "school", "baby", "mom", "dad", "sister", "brother", "garden",
+    "window", "family", "music", "summer", "winter", "flower", "animal", "birthday", "holiday", "morning", "night",
+    "ocean", "mountain", "river", "teacher", "homework", "chocolate", "cookie", "picnic", "bicycle", "picture",
+    "computer", "orange", "purple", "yellow", "circle", "square", "triangle", "market", "doctor", "nurse", "police",
+    "firefighter", "pilot", "farmer", "baker", "artist", "dancer", "singer"]
 medium_words = [
-    "pencil", "window", "flower", "garden", "silver", "bridge", "laptop", "orange", "pirate", "rocket",
-    "castle", "jungle", "planet", "wizard", "saddle", "sunset", "shadow", "forest", "basket", "thunder",
-    "helmet", "camera", "mirror", "statue", "breeze", "lantern", "tunnel", "village", "eagle", "whisper",
-    "luggage", "trophy", "dragon", "stream", "compass", "parrot", "crystal", "guitar", "harvest", "island"]
+    "library", "adventure", "history", "science", "nature", "planet", "universe", "energy", "electricity", "dinosaur",
+    "volcano", "astronaut", "discovery", "compass", "calendar", "language", "culture", "festival", "explore", "journey",
+    "mystery", "question", "answer", "butterfly", "elephant", "kangaroo", "waterfall", "rainbow", "thunder",
+    "lightning", "whisper", "shadow", "blanket", "pillow", "kitchen", "restaurant", "hospital", "grocery", "theater",
+    "museum", "assemble", "boundary", "calculate", "describe", "equation", "fraction", "generous", "harmony",
+    "illustrate", "journal", "knowledge", "village", "measure", "natural", "opposite", "passage", "pattern", "reason",
+    "special", "thousand", "biography", "architect", "engineer", "organism", "atmosphere", "circulation", "digestion",
+    "skeleton", "microscope", "telescope", "precipitation", "evaporation", "geography", "continent", "government",
+    "democracy", "economy", "literature", "expression", "analysis", "algebra", "geometry", "psychology", "philosophy",
+    "hypothesis", "experiment", "bacteria", "chromosome", "biodiversity", "equilibrium", "momentum", "velocity",
+    "acceleration", "metamorphosis", "circumference", "diameter", "radius", "proportion", "estimate", "conclusion",
+    "analysis", "evaluate", "justify", "kinetic", "longitude", "magnitude", "numerator", "organism", "perimeter",
+    "quotient", "ratio", "sequence", "thermal", "variable", "wavelength", "xylem", "zoology", "classify", "summarize",
+    "interpret"]
 hard_words = [
-    "quizzical", "xylophone", "jubilant", "subtlety", "chrysanthemum", "encyclopedia", "ambiguity",
-    "juxtapose", "vortex", "zeppelin", "facetious", "haphazard", "syzygy", "phosphorescent", "labyrinthine",
-    "dichotomy", "ephemeral", "persnickety", "onomatopoeia", "fluorescent", "ineffable", "obfuscate",
-    "proclivity", "mellifluous", "antediluvian", "preposterous", "conundrum", "effervescent", "serendipity",
-    "transcendent", "cacophony", "apocryphal", "ethereal", "sanguine", "idiosyncrasy", "zeitgeist", "epiphany",
-    "nefarious", "lugubrious", "iridescent"]
+    "civilization", "architecture", "archaeology", "anthropology", "bureaucracy", "constitution", "legislature",
+    "judiciary", "economics", "inflation", "recession", "globalization", "innovation", "technology", "communication",
+    "satellite", "astronomy", "meteorology", "geology", "genetics", "abnegation", "commensurate", "diffident",
+    "egregious", "fastidious", "grandiose", "histrionic", "incongruous", "juxtapose", "kindle", "levity", "myriad",
+    "neophyte", "obfuscate", "perfunctory", "quixotic", "recalcitrant", "sanguine", "vexation", "abstemious",
+    "antediluvian", "belligerent", "circumlocution", "disingenuous", "esoteric", "fatuous", "grandiloquent", "hubris",
+    "impetuous", "juxtaposition", "magnanimous", "nonchalant", "ostentatious", "perfidious", "querulous", "sagacious",
+    "tantamount", "vacillate", "wistful", "acquiesce", "bourgeois", "chicanery", "deleterious", "enervate", "facetious",
+    "gregarious", "hegemony", "incontrovertible", "jejune", "lugubrious", "obsequious", "pecuniary", "quotidian",
+    "recapitulate", "supercilious", "tempestuous", "unctuous", "vacuous", "xenophobe", "quizzical", "xylophone",
+    "jubilant", "subtlety", "chrysanthemum", "encyclopedia", "ambiguity", "vortex", "zeppelin", "haphazard", "syzygy",
+    "phosphorescent", "labyrinthine", "dichotomy", "ephemeral", "persnickety", "onomatopoeia", "fluorescent",
+    "ineffable", "proclivity", "mellifluous", "preposterous", "conundrum", "effervescent", "serendipity",
+    "transcendent", "cacophony", "apocryphal", "ethereal", "idiosyncrasy", "zeitgeist", "epiphany", "nefarious",
+    "iridescent"
+    ]
 
 speed = 0
 default_speed = 0
