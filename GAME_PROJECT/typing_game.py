@@ -114,6 +114,7 @@ words_completed = [] #list of all the words completed
 total_health_points = 10
 current_health_points = 0
 dmg_buffer = 30 #half a second
+time_since_dmg = 0
 
 #END
 end_img:ProgfaImage
@@ -183,7 +184,8 @@ def init_gameplay():
     global player_img, layers, player_sprite_width, current_words, max_word_amt, focused_word_idx, \
         speed, default_speed, speed_incr, speed_decr, speed_time, speed_timer, \
         boost_lines_amt, boost_lines_y, boost_lines_x, boost_lines_offset, \
-        play_timer, words_completed, total_health_points, current_health_points
+        play_timer, words_completed, total_health_points, current_health_points, \
+        time_since_dmg
 
     for i in range(layer_amt):
         layers.append(engine.load_image(f"Resources/{i + 1}.png"))
@@ -211,6 +213,8 @@ def init_gameplay():
     boost_lines_offset = 0
 
     current_health_points = total_health_points
+
+    time_since_dmg = 0
 
     pass
 
@@ -340,10 +344,11 @@ def draw_health_bar():
     """
     draws a health bar at the top of the screen
     """
+    engine.outline_color = None
     engine.color = 0,0,0
-    engine.draw_rectangle(0,0, engine.width, health_bar_height, None)
+    engine.draw_rectangle(0,0, engine.width, health_bar_height)
     engine.color = 1,0,0
-    engine.draw_rectangle(0,0,engine.width * (current_health_points / total_health_points), health_bar_height, None)
+    engine.draw_rectangle(0,0,engine.width * (current_health_points / total_health_points), health_bar_height)
 
     pass
 
@@ -358,6 +363,7 @@ def evaluate():
         animate_parallax(speed)
         animate_boost_effect()
         game_time()
+        buffer_timer()
 
     pass
 
@@ -373,6 +379,16 @@ def speed_handler():
         if speed_timer == 0:
             speed = default_speed
             print(f"going back to speed: {speed}")
+
+    pass
+
+def buffer_timer():
+    """
+    counts up the buffer timer
+    """
+    global time_since_dmg
+
+    time_since_dmg += 1
 
     pass
 
@@ -558,20 +574,24 @@ def score_handler(points:int):
     :param points:
     :return:
     """
-    global score, mistakes, speed, speed_timer
+    global score, mistakes, speed, speed_timer, time_since_dmg
 
     score += points * score_multiplier
 
-    if points >= 0:
+    if points > 0:
         speed += speed_incr
         speed_timer = speed_time #start speeding
         print(f"speed: {speed}, timer: {speed_timer} ")
     if points < 0:
-        mistakes -= points
-        if not speed >= speed_decr:
-            speed -= speed_decr
-        speed_timer = speed_time #start slowing
-        print(f"speed: {speed}, timer: {speed_timer} ")
+        if time_since_dmg > dmg_buffer:
+            mistakes -= points
+            if not speed >= speed_decr:
+                speed -= speed_decr
+            speed_timer = speed_time #start slowing
+            print(f"speed: {speed}, timer: {speed_timer} ")
+            time_since_dmg = 0
+        else:
+            print("stop spamming wrong letters, fool")
 
     pass
 
