@@ -53,6 +53,7 @@ boost_lines_y = []
 boost_lines_x = []
 boost_lines_amt = 0 #how many lines
 boost_lines_offset = 0 #random added value for x pos
+health_bar_height = 30
 #Logic
 typed_letters = ""
 displayed_word = ""
@@ -100,14 +101,19 @@ hard_words = [
     "transcendent", "cacophony", "apocryphal", "ethereal", "idiosyncrasy", "zeitgeist", "epiphany", "nefarious",
     "iridescent"
     ]
-
 speed = 0
-default_speed = 0
-speed_incr = 0 #added when boosting
-speed_decr = 0 #removed when slowing (?)
+default_speed = 1
+speed_incr = 1 #added when boosting
+speed_decr = .4 #removed when slowing (?)
 speed_time = 0
 speed_timer = 0
 score_multiplier = 0
+play_time = 10 # game time in seconds
+play_timer = 0  #countdown for the game
+words_completed = [] #list of all the words completed
+total_health_points = 10
+current_health_points = 0
+dmg_buffer = 30 #half a second
 
 #END
 end_img:ProgfaImage
@@ -176,7 +182,8 @@ def init_gameplay():
     """
     global player_img, layers, player_sprite_width, current_words, max_word_amt, focused_word_idx, \
         speed, default_speed, speed_incr, speed_decr, speed_time, speed_timer, \
-        boost_lines_amt, boost_lines_y, boost_lines_x, boost_lines_offset
+        boost_lines_amt, boost_lines_y, boost_lines_x, boost_lines_offset, \
+        play_timer, words_completed, total_health_points, current_health_points
 
     for i in range(layer_amt):
         layers.append(engine.load_image(f"Resources/{i + 1}.png"))
@@ -190,18 +197,20 @@ def init_gameplay():
     max_word_amt = 5
     focused_word_idx = -1
 
-    speed = 1
-    default_speed = 1
-    speed_incr = 1
-    speed_decr = .4
+    speed = default_speed
     speed_time = 60 #frames, 1s
     speed_timer = 0
+
+    play_timer = play_time * 60 # * 60 for frames
+    words_completed.clear()
 
     boost_lines_amt = 5
     for i in range(boost_lines_amt):
         boost_lines_y.append(random.randint(5, engine.height-5))
         boost_lines_x.append(random.randint(int(engine.width/2),engine.width))
     boost_lines_offset = 0
+
+    current_health_points = total_health_points
 
     pass
 
@@ -249,11 +258,18 @@ def draw_start():
 def draw_end():
     global end_img
     #TODO:
+    engine.color = 0,0,0,.5
+    engine.draw_rectangle(0,0,engine.width,engine.height)
 
-    rnd_x = random.randint(0,engine.width)
-    rnd_y = random.randint(0, engine.height)
+    end_img.draw(end_img.width / 2 - end_img.width / 2, end_img.height / 2 - end_img.height / 2)
+    engine.color = 0,0,0,.1
+    engine.draw_rectangle(0, 0, engine.width, engine.height)
 
-    end_img.draw(rnd_x-end_img.width/2,rnd_y-end_img.height/2)
+    engine.color = 1,1,1
+    engine.draw_text(f"you scored {score} points and got {len(words_completed)} words correct",engine.width/2,engine.height/2,True)
+    avg_time_per_word = round(play_time/len(words_completed),2)
+    engine.draw_text(f"that means you took an average of {avg_time_per_word} seconds per word ",engine.width/2,engine.height/2+20,True)
+
     pass
 
 def draw_visuals():
@@ -278,6 +294,8 @@ def draw_visuals():
 
     player_img.draw_partial(60,ground_height,(0,0,player_img.height,player_sprite_width))
 
+    draw_health_bar()
+
     pass
 
 def draw_game_text():
@@ -298,6 +316,63 @@ def draw_game_text():
         word,x,y = displayed_words[focused_word_idx]
         engine.color = 0, 1, 0
         engine.draw_text(typed_letters, x, y)
+
+    pass
+
+def draw_boost_effect():
+    """
+    draws speed lines on the screen
+    """
+    global boost_lines_y, boost_lines_x, boost_lines_offset
+
+    line_length = engine.width/5
+
+    engine.color = 1,1,1
+    engine.outline_color = 1,1,1
+
+    for x, y in zip(boost_lines_x,boost_lines_y):
+        engine.draw_line(engine.width+x-boost_lines_offset,y,
+                         engine.width+x+line_length-boost_lines_offset,y,2)
+
+    pass
+
+def draw_health_bar():
+    """
+    draws a health bar at the top of the screen
+    """
+    engine.color = 0,0,0
+    engine.draw_rectangle(0,0, engine.width, health_bar_height, None)
+    engine.color = 1,0,0
+    engine.draw_rectangle(0,0,engine.width * (current_health_points / total_health_points), health_bar_height, None)
+
+    pass
+
+
+def evaluate():
+    """
+    This function is being executed over and over, as fast as the frame rate. Use to update (not draw).
+    """
+    if current_state == GameState.PLAY:
+        add_word()
+        speed_handler()
+        animate_parallax(speed)
+        animate_boost_effect()
+        game_time()
+
+    pass
+
+def speed_handler():
+    """
+    counts down the timer and resets the speed when the timer hits 0.
+    :return:
+    """
+    global speed_timer, speed
+
+    if speed_timer > 0:
+        speed_timer -= 1
+        if speed_timer == 0:
+            speed = default_speed
+            print(f"going back to speed: {speed}")
 
     pass
 
@@ -326,51 +401,6 @@ def animate_parallax(speed_multiplier):
 
     pass
 
-def draw_boost_effect():
-    """
-    draws speed lines on the screen
-    """
-    global boost_lines_y, boost_lines_x, boost_lines_offset
-
-    line_length = engine.width/5
-
-    engine.color = 1,1,1
-    engine.outline_color = 1,1,1
-
-    for x, y in zip(boost_lines_x,boost_lines_y):
-        engine.draw_line(engine.width+x-boost_lines_offset,y,
-                         engine.width+x+line_length-boost_lines_offset,y,2)
-
-    pass
-
-
-def evaluate():
-    """
-    This function is being executed over and over, as fast as the frame rate. Use to update (not draw).
-    """
-    if current_state == GameState.PLAY:
-        add_word()
-        speed_handler()
-        animate_parallax(speed)
-        animate_boost_effect()
-
-    pass
-
-def speed_handler():
-    """
-    counts down the timer and resets the speed when the timer hits 0.
-    :return:
-    """
-    global speed_timer, speed
-
-    if speed_timer > 0:
-        speed_timer -= 1
-        if speed_timer == 0:
-            speed = default_speed
-            print(f"going back to speed: {speed}")
-
-    pass
-
 def animate_boost_effect():
     """
     adds to the x pos of every line. when they go off-screen, they get reset with a new x and y value.
@@ -384,6 +414,26 @@ def animate_boost_effect():
             boost_lines_y[i] = random.randint(5, engine.height-5)
 
     pass
+
+def game_time():
+    global play_timer
+
+    play_timer -= 1
+    check_game_end()
+    pass
+
+def check_game_end():
+    """
+    checks if the game time has ran out and changes the gamestate if necessary.
+    """
+    global current_state
+    #TODO: change condition
+    if play_timer <= 0:
+        print(f"congratulations, end of the game! score: {score}")
+        current_state = GameState.END
+
+    pass
+
 
 def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
     """
@@ -455,7 +505,7 @@ def spell_checker(k):
     :param k: pressed key
     :return:
     """
-    global current_words, displayed_word, displayed_words, focused_word_idx, typed_letters, mistakes, speed
+    global current_words, displayed_word, displayed_words, focused_word_idx, typed_letters, mistakes, speed, words_completed
 
     if focused_word_idx == -1: #no word focused
         for i, (word, x, y) in enumerate(displayed_words):
@@ -472,6 +522,7 @@ def spell_checker(k):
         print(f"{k.lower()} - 👍")
         typed_letters += k
         if word == typed_letters: #if word complete
+            words_completed.append(typed_letters)
             word_complete()
     else:
         for i, (new_word, x, y) in enumerate(displayed_words):
@@ -515,7 +566,6 @@ def score_handler(points:int):
         speed += speed_incr
         speed_timer = speed_time #start speeding
         print(f"speed: {speed}, timer: {speed_timer} ")
-        check_game_end()
     if points < 0:
         mistakes -= points
         if not speed >= speed_decr:
@@ -537,18 +587,6 @@ def check_word_difficulty():
         score_multiplier = 4
     else:
         score_multiplier = 1
-
-    pass
-
-def check_game_end():
-    """
-    checks if the game time has ran out and changes the gamestate if necessary.
-    """
-    global current_state
-    #TODO: change condition
-    if score > 20:
-        print(f"congratulations, end of the game! score: {score}")
-        current_state = GameState.END
 
     pass
 
