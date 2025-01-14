@@ -53,7 +53,7 @@ boost_lines_y = []
 boost_lines_x = []
 boost_lines_amt = 0 #how many lines
 boost_lines_offset = 0 #random added value for x pos
-health_bar_height = 30
+health_bar_height = 10
 #Logic
 typed_letters = ""
 displayed_word = ""
@@ -108,16 +108,24 @@ speed_decr = .4 #removed when slowing (?)
 speed_time = 0
 speed_timer = 0
 score_multiplier = 0
-play_time = 10 # game time in seconds
+play_time = 30 # game time in seconds
 play_timer = 0  #countdown for the game
 words_completed = [] #list of all the words completed
 total_health_points = 10
 current_health_points = 0
-dmg_buffer = 30 #half a second
+dmg_buffer = 15 #fourth of a second
 time_since_dmg = 0
 
+player_won = False
+
 #END
-end_img:ProgfaImage
+win_img:ProgfaImage
+loss_img:ProgfaImage
+
+#TEMP
+dot_counter = 0
+seven_days = ""
+dots = [".̶̡̙͈̥̺̟̙͕̈́̅͂",".̵̛̖̺͙̰̺̙̩̭͕̀̏͊̌̆̓͐̓̐̅̀͂͑̌",".̶̡̨̻̪̞̳͓͈̺͖̬͈̹͉̬̑̾̀̊̃̇̾͆̈́̑̍͛͠",".̸̨̢̡̱͈̖̳̗̖̳̬̰͓̅̍̌͊̆̾͊",".̶͚̭͔͓͔̲̔͌̊̅́͆͛̅̌́̀̽͘",".̵̳̌̀",".̷̢̜̃͗̅̏͒",".̷͚̽"]
 
 class GameState(Enum):
     START = 0
@@ -170,10 +178,16 @@ def init_end():
     """
     puts the right values in the global variables needed for the end screen
     """
-    global end_img
+    global win_img, loss_img, dot_counter,seven_days
     #TODO:
-    end_img = engine.load_image("Resources/emoji.png")
-    end_img.resize(engine.width,engine.height,False)
+    win_img = engine.load_image("Resources/win.png")
+    win_img.resize(engine.width, engine.height, False)
+
+    loss_img = engine.load_image("Resources/loss.webp")
+    loss_img.resize(engine.width,engine.height,False)
+
+    seven_days = "s̴̼̊̽̐͌͆̈̈́̓͐̕̚ë̷̡̦̹͎̟̙̪̤̖̺́̈́̈̆̾̆̊̈̀͛̃̐̌ͅv̸̧̹̦̘͚̦̫̭̝̼̣͖̓͒̒̑̓́́͆̚͠e̷̮͑͊̔̄͑̂̊̆̈́̕͝͝ṉ̷̣̭̓̔̊̂̌͜͝͝ ̸̟͓͕͉̱̙̞̥̫͐̂̇̋̅̈́̿̆̒̎̕͝͝d̷̛͕͖̮̙̙̱̤̪̙́̍̌́̉̓̆̍̓͠á̸̧̲̜̻͚͓͎̫̹̤̥̖̘̺̍́̏̇͝y̷̢̒͆̈́̓̑̿̕͝s̶̨̧̹̖͖̭̲̯̜̿̉͘"
+    dot_counter = 0
 
     pass
 
@@ -260,20 +274,32 @@ def draw_start():
     pass
 
 def draw_end():
-    global end_img
+    global win_img, loss_img, dot_counter, seven_days
     #TODO:
     engine.color = 0,0,0,.5
     engine.draw_rectangle(0,0,engine.width,engine.height)
 
-    end_img.draw(end_img.width / 2 - end_img.width / 2, end_img.height / 2 - end_img.height / 2)
-    engine.color = 0,0,0,.1
-    engine.draw_rectangle(0, 0, engine.width, engine.height)
+    if player_won:
+        win_img.draw(0,0)
+        engine.color = 0, 0, 0, .1
+        engine.draw_rectangle(0, 0, engine.width, engine.height)
 
-    engine.color = 1,1,1
-    engine.draw_text(f"you scored {score} points and got {len(words_completed)} words correct",engine.width/2,engine.height/2,True)
-    avg_time_per_word = round(play_time/len(words_completed),2)
-    engine.draw_text(f"that means you took an average of {avg_time_per_word} seconds per word ",engine.width/2,engine.height/2+20,True)
+        engine.color = 1, 1, 1
+        engine.draw_text(f"you scored {score} points and got {len(words_completed)} words correct", engine.width / 2,
+                         engine.height / 2, True)
+        avg_time_per_word = round(play_time / len(words_completed), 2)
+        engine.draw_text(f"that means you took an average of {avg_time_per_word} seconds per word ", engine.width / 2,
+                         engine.height / 2 + 20, True)
+    else:
+        loss_img.draw(0,0)
+        engine.color = 1,1,1
 
+        dot_counter += 1
+        if dot_counter > 60:
+            seven_days += random.choice(dots)
+            dot_counter = 0
+
+        engine.draw_text(seven_days, engine.width/2,engine.height/2, True)
     pass
 
 def draw_visuals():
@@ -442,10 +468,14 @@ def check_game_end():
     """
     checks if the game time has ran out and changes the gamestate if necessary.
     """
-    global current_state
+    global current_state, player_won
     #TODO: change condition
     if play_timer <= 0:
         print(f"congratulations, end of the game! score: {score}")
+        player_won = True
+        current_state = GameState.END
+    if current_health_points <= 0:
+        player_won = False
         current_state = GameState.END
 
     pass
@@ -521,7 +551,8 @@ def spell_checker(k):
     :param k: pressed key
     :return:
     """
-    global current_words, displayed_word, displayed_words, focused_word_idx, typed_letters, mistakes, speed, words_completed
+    global current_words, displayed_word, displayed_words, focused_word_idx, typed_letters, \
+        mistakes, speed, words_completed
 
     if focused_word_idx == -1: #no word focused
         for i, (word, x, y) in enumerate(displayed_words):
@@ -574,7 +605,7 @@ def score_handler(points:int):
     :param points:
     :return:
     """
-    global score, mistakes, speed, speed_timer, time_since_dmg
+    global score, mistakes, speed, speed_timer, time_since_dmg, current_health_points
 
     score += points * score_multiplier
 
@@ -589,6 +620,8 @@ def score_handler(points:int):
                 speed -= speed_decr
             speed_timer = speed_time #start slowing
             print(f"speed: {speed}, timer: {speed_timer} ")
+            current_health_points -= 1
+            check_game_end()
             time_since_dmg = 0
         else:
             print("stop spamming wrong letters, fool")
