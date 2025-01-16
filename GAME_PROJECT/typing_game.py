@@ -149,9 +149,6 @@ def init_start():
         quit_btn_x, quit_btn_y, diff_btn_width, diff_btn_y, easy_btn_x, medium_btn_x, hard_btn_x, \
         current_state
 
-    #TEMP
-    #current_state = GameState.END
-
     bg_img = engine.load_image("Resources/UI/bg.png")
     btn_img = engine.load_image("Resources/UI/btn.png")
     diff_btn_img = engine.load_image("Resources/UI/btn.png")
@@ -160,17 +157,17 @@ def init_start():
     btn_img.resize(250,75,False)
     diff_btn_img.resize(250*2/3,75,False)
 
-    quit_btn_x = engine.width / 2 - (btn_img.width / 2)
+    quit_btn_x = engine.width  / 2 - (btn_img.width / 2)
     quit_btn_y = engine.height / 2 + btn_img.height / 2 + btn_offset
 
     btn_offset = 10
-    btn_width = btn_img.width
+    btn_width  = btn_img.width
     btn_height = btn_img.height
     diff_btn_width = btn_img.width*2/3
-    diff_btn_y = engine.height / 2 - (btn_img.height / 2)
-    easy_btn_x = engine.width / 2 - (diff_btn_img.width / 2) - diff_btn_width - btn_offset
-    medium_btn_x = engine.width / 2 - (diff_btn_img.width / 2)
-    hard_btn_x = engine.width / 2 - (diff_btn_img.width / 2) + diff_btn_width + btn_offset
+    diff_btn_y   = engine.height / 2 - (btn_img.height / 2)
+    easy_btn_x   = engine.width  / 2 - (diff_btn_img.width / 2) - diff_btn_width - btn_offset
+    medium_btn_x = engine.width  / 2 - (diff_btn_img.width / 2)
+    hard_btn_x   = engine.width  / 2 - (diff_btn_img.width / 2) + diff_btn_width + btn_offset
 
     pass
 
@@ -241,7 +238,6 @@ def render():
     """
     This function is being executed over and over, as fast as the frame rate. Use to draw (not update).
     """
-
     if current_state == GameState.START:
         draw_start()
     if current_state == GameState.PLAY:
@@ -255,9 +251,7 @@ def render():
 def draw_start():
     """
     draws the start menu background image with two buttons in the middle, one to start the game and one to quit the program
-    :return:
     """
-
     engine.color = 1,1,1
     engine.set_font_size(34)
 
@@ -278,6 +272,9 @@ def draw_start():
     pass
 
 def draw_end():
+    """
+    draws the end screen based on if the player won or not
+    """
     global win_img, loss_img
 
     engine.color = 0,0,0,.5
@@ -317,7 +314,6 @@ def draw_end():
 def draw_visuals():
     """
     draws the visuals (background and player)
-    :return:
     """
     global player_img, player_sprite_width, speed
 
@@ -337,13 +333,13 @@ def draw_visuals():
     player_img.draw_partial(60,ground_height,(0,0,player_img.height,player_sprite_width))
 
     draw_health_bar()
+    draw_score()
 
     pass
 
 def draw_game_text():
     """
     draws words on the screen and colours them as you type
-    :return:
     """
     global current_words,displayed_word,typed_letters, displayed_words, focused_word_idx
 
@@ -390,6 +386,17 @@ def draw_health_bar():
 
     pass
 
+def draw_score():
+    """
+    draws the current score under the health bar and the current score under that
+    """
+    engine.color = 1,1,1
+    seconds = round(play_timer/60)
+    engine.draw_text(f"{seconds}",5, health_bar_height+5)
+    engine.draw_text(f"{score} points",5, health_bar_height+30)
+
+    pass
+
 
 def evaluate():
     """
@@ -408,7 +415,6 @@ def evaluate():
 def speed_handler():
     """
     counts down the timer and resets the speed when the timer hits 0.
-    :return:
     """
     global speed_timer, speed
 
@@ -433,7 +439,6 @@ def buffer_timer():
 def animate_parallax(speed_multiplier):
     """
     animates the background with parallax effect
-    :return:
     """
     global list_x_pos
 
@@ -470,6 +475,9 @@ def animate_boost_effect():
     pass
 
 def game_time():
+    """
+    advances the game time and checks if the game should end
+    """
     global play_timer
 
     play_timer -= 1
@@ -481,13 +489,12 @@ def check_game_end():
     checks if the game time has run out and changes the gamestate if necessary.
     """
     global current_state, player_won
-    #TODO:
+
     if play_timer <= 0:
         print(f"congratulations, end of the game! score: {score}")
         player_won = True
         current_state = GameState.END
     if current_health_points <= 0:
-
         player_won = False
         current_state = GameState.END
 
@@ -526,6 +533,7 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
 def pick_difficulty(idx:int):
     """
     adds words to the list of words to use. harder difficulties include easier difficulties.
+    :param idx: number 1 to 3
     """
 
     match idx:
@@ -550,6 +558,9 @@ def pick_difficulty(idx:int):
     pass
 
 def reset_game():
+    """
+    resets all the necessary values to restart the game
+    """
     global current_health_points, score, focused_word_idx, \
         speed, speed_timer, play_timer, time_since_dmg, boost_lines_offset
 
@@ -589,7 +600,6 @@ def spell_checker(k):
     """
     checks if the typed letter is the same as the next letter in the displayed word.
     :param k: pressed key
-    :return:
     """
     global current_words, displayed_word, displayed_words, focused_word_idx, typed_letters, \
         mistakes, speed, words_completed
@@ -624,6 +634,9 @@ def spell_checker(k):
     pass
 
 def word_complete():
+    """
+    resets focused word and typed letters, checks the difficulty of the word and adds new words on the screen
+    """
     global focused_word_idx, typed_letters, displayed_words
 
     word, x, y = displayed_words[focused_word_idx]
@@ -642,8 +655,7 @@ def word_complete():
 def score_handler(points:int):
     """
     calculates the score by checking is the word is correct or not.
-    :param points:
-    :return:
+    :param points: number to add or subtract from the score
     """
     global score, mistakes, speed, speed_timer, time_since_dmg, current_health_points
 
@@ -686,7 +698,6 @@ def check_word_difficulty():
 def next_word():
     """
     resets typed letters and picks a new word to display
-    :return:
     """
     global current_words, displayed_word, typed_letters
 
@@ -698,7 +709,6 @@ def next_word():
 def add_word():
     """
     adds a new word on the screen in a random position. Only if there is fewer words than the maximum words allowed
-    :return:
     """
     global displayed_words, current_words, max_word_amt
 
