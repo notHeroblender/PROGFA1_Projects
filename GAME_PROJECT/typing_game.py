@@ -31,8 +31,6 @@ mistakes = 0
 btn_offset = 0
 btn_width = 0
 btn_height = 0
-start_btn_x = 0
-start_btn_y = 0
 quit_btn_x = 0
 quit_btn_y = 0
 diff_btn_width = 0
@@ -121,11 +119,10 @@ player_won = False
 #END
 win_img:ProgfaImage
 loss_img:ProgfaImage
-
-#TEMP
-dot_counter = 0
-seven_days = ""
-dots = [".̶̡̙͈̥̺̟̙͕̈́̅͂",".̵̛̖̺͙̰̺̙̩̭͕̀̏͊̌̆̓͐̓̐̅̀͂͑̌",".̶̡̨̻̪̞̳͓͈̺͖̬͈̹͉̬̑̾̀̊̃̇̾͆̈́̑̍͛͠",".̸̨̢̡̱͈̖̳̗̖̳̬̰͓̅̍̌͊̆̾͊",".̶͚̭͔͓͔̲̔͌̊̅́͆͛̅̌́̀̽͘",".̵̳̌̀",".̷̢̜̃͗̅̏͒",".̷͚̽"]
+again_btn_x = 0
+again_btn_y = 0
+menu_btn_x = 0
+menu_btn_y = 0
 
 class GameState(Enum):
     START = 0
@@ -149,8 +146,11 @@ def init_start():
     puts the right values in the global variables needed for the start screen
     """
     global bg_img, btn_img, diff_btn_img, btn_offset, btn_width, btn_height,\
-        start_btn_x, start_btn_y, quit_btn_x, quit_btn_y,\
-        diff_btn_width, diff_btn_y, easy_btn_x,medium_btn_x,hard_btn_x
+        quit_btn_x, quit_btn_y, diff_btn_width, diff_btn_y, easy_btn_x, medium_btn_x, hard_btn_x, \
+        current_state
+
+    #TEMP
+    #current_state = GameState.END
 
     bg_img = engine.load_image("Resources/UI/bg.png")
     btn_img = engine.load_image("Resources/UI/btn.png")
@@ -178,16 +178,20 @@ def init_end():
     """
     puts the right values in the global variables needed for the end screen
     """
-    global win_img, loss_img, dot_counter,seven_days
-    #TODO:
+    global win_img, loss_img, \
+        again_btn_x, again_btn_y, menu_btn_x, menu_btn_y, btn_img,btn_offset
+
     win_img = engine.load_image("Resources/win.png")
-    win_img.resize(engine.width, engine.height, False)
+    win_img.resize(engine.width/2, engine.height/2, False)
 
-    loss_img = engine.load_image("Resources/loss.webp")
-    loss_img.resize(engine.width,engine.height,False)
+    loss_img = engine.load_image("Resources/loss.png")
+    loss_img.resize(engine.width/2,engine.height/2,True)
 
-    seven_days = "s̴̼̊̽̐͌͆̈̈́̓͐̕̚ë̷̡̦̹͎̟̙̪̤̖̺́̈́̈̆̾̆̊̈̀͛̃̐̌ͅv̸̧̹̦̘͚̦̫̭̝̼̣͖̓͒̒̑̓́́͆̚͠e̷̮͑͊̔̄͑̂̊̆̈́̕͝͝ṉ̷̣̭̓̔̊̂̌͜͝͝ ̸̟͓͕͉̱̙̞̥̫͐̂̇̋̅̈́̿̆̒̎̕͝͝d̷̛͕͖̮̙̙̱̤̪̙́̍̌́̉̓̆̍̓͠á̸̧̲̜̻͚͓͎̫̹̤̥̖̘̺̍́̏̇͝y̷̢̒͆̈́̓̑̿̕͝s̶̨̧̹̖͖̭̲̯̜̿̉͘"
-    dot_counter = 0
+    btn_img = engine.load_image("Resources/UI/btn.png")
+    btn_img.resize(250, 75, False)
+
+    again_btn_x, again_btn_y = engine.width/2 - btn_img.width/2, engine.height/3*2
+    menu_btn_x, menu_btn_y = engine.width/2 - btn_img.width/2, engine.height/3*2+btn_img.height+btn_offset
 
     pass
 
@@ -260,46 +264,54 @@ def draw_start():
     bg_img.draw(0,0)
 
     diff_btn_img.draw(easy_btn_x,diff_btn_y)
-    engine.draw_text("EASY", easy_btn_x+diff_btn_width/2, diff_btn_y+btn_height/2,True)
+    engine.draw_text("EASY",  easy_btn_x+diff_btn_width/2,   diff_btn_y+btn_height/2,True)
 
     diff_btn_img.draw(medium_btn_x,diff_btn_y)
-    engine.draw_text("MEDIUM",medium_btn_x+diff_btn_width/2,diff_btn_y+btn_height/2,True)
+    engine.draw_text("MEDIUM",medium_btn_x+diff_btn_width/2, diff_btn_y+btn_height/2,True)
 
     diff_btn_img.draw(hard_btn_x,diff_btn_y)
-    engine.draw_text("HARD",hard_btn_x+diff_btn_width/2,diff_btn_y+btn_height/2,True)
+    engine.draw_text("HARD",  hard_btn_x+diff_btn_width/2,   diff_btn_y+btn_height/2,True)
 
     btn_img.draw(quit_btn_x, quit_btn_y+btn_offset)
-    engine.draw_text("QUIT", engine.width/2,engine.height/2+btn_height+btn_offset, True)
+    engine.draw_text("QUIT", engine.width/2, engine.height/2+btn_height+btn_offset, True)
 
     pass
 
 def draw_end():
-    global win_img, loss_img, dot_counter, seven_days
-    #TODO:
+    global win_img, loss_img
+
     engine.color = 0,0,0,.5
     engine.draw_rectangle(0,0,engine.width,engine.height)
 
     if player_won:
-        win_img.draw(0,0)
+        win_img.draw(engine.width/2-win_img.width/2,0)
         engine.color = 0, 0, 0, .1
         engine.draw_rectangle(0, 0, engine.width, engine.height)
 
         engine.color = 1, 1, 1
-        engine.draw_text(f"you scored {score} points and got {len(words_completed)} words correct", engine.width / 2,
-                         engine.height / 2, True)
+        engine.draw_text(f"you scored {score} points and got {len(words_completed)} words correct",
+                         engine.width/2, engine.height/2+40, True)
         avg_time_per_word = round(play_time / len(words_completed), 2)
-        engine.draw_text(f"that means you took an average of {avg_time_per_word} seconds per word ", engine.width / 2,
-                         engine.height / 2 + 20, True)
+        engine.draw_text(f"that means you took an average of {avg_time_per_word} seconds per word ",
+                         engine.width/2, engine.height/2+65, True)
     else:
-        loss_img.draw(0,0)
+        # TODO:
+        loss_img.draw(engine.width/2-loss_img.width/2,0)
+        time_left = round(play_time - play_timer/60, 2)
+
         engine.color = 1,1,1
 
-        dot_counter += 1
-        if dot_counter > 60:
-            seven_days += random.choice(dots)
-            dot_counter = 0
+        engine.draw_text(f"you survived for {time_left} seconds. better luck next time",
+                         engine.width/2,engine.height/2+40, True)
+        engine.draw_text(f"you did get {len(words_completed)} word right.",
+                         engine.width/2, engine.height/2+65, True)
 
-        engine.draw_text(seven_days, engine.width/2,engine.height/2, True)
+    btn_img.draw(again_btn_x, again_btn_y)
+    engine.draw_text("AGAIN", again_btn_x + btn_img.width / 2, again_btn_y + btn_height / 2, True)
+
+    btn_img.draw(menu_btn_x, menu_btn_y)
+    engine.draw_text("MENU", menu_btn_x + btn_img.width / 2, menu_btn_y + btn_height / 2, True)
+
     pass
 
 def draw_visuals():
@@ -466,15 +478,16 @@ def game_time():
 
 def check_game_end():
     """
-    checks if the game time has ran out and changes the gamestate if necessary.
+    checks if the game time has run out and changes the gamestate if necessary.
     """
     global current_state, player_won
-    #TODO: change condition
+    #TODO:
     if play_timer <= 0:
         print(f"congratulations, end of the game! score: {score}")
         player_won = True
         current_state = GameState.END
     if current_health_points <= 0:
+
         player_won = False
         current_state = GameState.END
 
@@ -489,19 +502,24 @@ def mouse_pressed_event(mouse_x: int, mouse_y: int, mouse_button: MouseButton):
 
     if current_state == GameState.START:
         if (easy_btn_x < mouse_x < easy_btn_x+diff_btn_width) and (diff_btn_y<mouse_y<diff_btn_y+btn_height):
-            print("easy chosen")
             pick_difficulty(1)
             current_state = GameState.PLAY
         elif (medium_btn_x < mouse_x < medium_btn_x+diff_btn_width) and (diff_btn_y<mouse_y<diff_btn_y+btn_height):
-            print("medium chosen")
             pick_difficulty(2)
             current_state = GameState.PLAY
         elif (hard_btn_x < mouse_x < hard_btn_x+diff_btn_width) and (diff_btn_y<mouse_y<diff_btn_y+btn_height):
-            print("hard chosen")
             pick_difficulty(3)
             current_state = GameState.PLAY
         elif (quit_btn_x < mouse_x < quit_btn_x+btn_width) and (quit_btn_y+btn_offset < mouse_y < quit_btn_y+btn_height+btn_offset):
             quit()
+    if current_state == GameState.END:
+        if (menu_btn_x < mouse_x < menu_btn_x+btn_img.width) and (menu_btn_y < mouse_y < menu_btn_y+btn_img.height):
+            print("back to menu")
+            current_state = GameState.START
+        if (again_btn_x < mouse_x < again_btn_x+btn_img.width) and (again_btn_y < mouse_y < again_btn_y+btn_img.height):
+            print("playing again")
+            reset_game()
+            current_state = GameState.PLAY
 
     pass
 
@@ -523,6 +541,28 @@ def pick_difficulty(idx:int):
             current_words.extend(easy_words)
             current_words.extend(medium_words)
             current_words.extend(hard_words)
+        case _:
+            print("no difficulty chosen, all words")
+            current_words.clear()
+            current_words.extend(easy_words)
+            current_words.extend(medium_words)
+            current_words.extend(hard_words)
+    pass
+
+def reset_game():
+    global current_health_points, score, focused_word_idx, \
+        speed, speed_timer, play_timer, time_since_dmg, boost_lines_offset
+
+    current_health_points = total_health_points
+    score = 0
+    speed = default_speed
+    speed_timer = 0
+    play_timer = play_time * 60  # * 60 for frames
+    words_completed.clear()
+    time_since_dmg = 0
+    focused_word_idx = -1
+    boost_lines_offset = 0
+
     pass
 
 
